@@ -1,14 +1,17 @@
 /**
- * News Service - Handles all API calls to NewsAPI
+ * News Service - Handles all API calls to NewsAPI via Vercel proxy
+ * 
+ * The Vercel serverless function acts as a proxy to avoid CORS issues
+ * with NewsAPI's Developer plan.
  * 
  * Get your free API key at: https://newsapi.org/
  * Free tier: 100 requests per day
  */
 
-// ⚠️ API Key is loaded from environment variables for security
-// Create a .env.local file with: VUE_APP_NEWS_API_KEY=your_key_here
-const API_KEY = process.env.VUE_APP_NEWS_API_KEY
-const BASE_URL = 'https://newsapi.org/v2'
+// ⚠️ Vercel API URL is loaded from environment variables
+// In production (GitHub Pages), this should be your Vercel deployment URL
+// In development, you can use localhost or your Vercel URL
+const VERCEL_API_URL = process.env.VUE_APP_VERCEL_API_URL || 'https://news-mu-lemon.vercel.app/api/news'
 
 /**
  * Fetch news articles by category
@@ -17,18 +20,18 @@ const BASE_URL = 'https://newsapi.org/v2'
  * @returns {Promise<Object>} - Articles data or error
  */
 export async function fetchNewsByCategory(category = 'general', page = 1) {
-  // Validate API key
-  if (!API_KEY) {
+  // Validate Vercel API URL
+  if (!VERCEL_API_URL) {
     return {
       articles: [],
       totalResults: 0,
       status: 'error',
-      message: 'API key not configured. Please set VUE_APP_NEWS_API_KEY in your .env.local file'
+      message: 'Vercel API URL not configured. Please set VUE_APP_VERCEL_API_URL in your .env.local file'
     }
   }
 
   try {
-    const endpoint = `${BASE_URL}/top-headlines?category=${category}&country=us&page=${page}&apiKey=${API_KEY}`
+    const endpoint = `${VERCEL_API_URL}?category=${category}&page=${page}`
     const response = await fetch(endpoint)
     
     if (!response.ok) {
@@ -55,12 +58,12 @@ export async function fetchNewsByCategory(category = 'general', page = 1) {
  * @returns {Promise<Object>} - Search results
  */
 export async function searchNews(query, sortBy = 'relevancy', page = 1) {
-  if (!API_KEY) {
+  if (!VERCEL_API_URL) {
     return {
       articles: [],
       totalResults: 0,
       status: 'error',
-      message: 'API key not configured. Please set VUE_APP_NEWS_API_KEY in your .env.local file'
+      message: 'Vercel API URL not configured. Please set VUE_APP_VERCEL_API_URL in your .env.local file'
     }
   }
 
@@ -69,7 +72,7 @@ export async function searchNews(query, sortBy = 'relevancy', page = 1) {
       return { articles: [], totalResults: 0, status: 'ok' }
     }
     
-    const endpoint = `${BASE_URL}/everything?q=${encodeURIComponent(query)}&sortBy=${sortBy}&page=${page}&apiKey=${API_KEY}`
+    const endpoint = `${VERCEL_API_URL}?q=${encodeURIComponent(query)}&sortBy=${sortBy}&page=${page}`
     const response = await fetch(endpoint)
     
     if (!response.ok) {
@@ -95,17 +98,17 @@ export async function searchNews(query, sortBy = 'relevancy', page = 1) {
  * @returns {Promise<Object>} - Headlines
  */
 export async function fetchTopHeadlines(country = 'us', page = 1) {
-  if (!API_KEY) {
+  if (!VERCEL_API_URL) {
     return {
       articles: [],
       totalResults: 0,
       status: 'error',
-      message: 'API key not configured. Please set VUE_APP_NEWS_API_KEY in your .env.local file'
+      message: 'Vercel API URL not configured. Please set VUE_APP_VERCEL_API_URL in your .env.local file'
     }
   }
 
   try {
-    const endpoint = `${BASE_URL}/top-headlines?country=${country}&page=${page}&apiKey=${API_KEY}`
+    const endpoint = `${VERCEL_API_URL}?country=${country}&page=${page}`
     const response = await fetch(endpoint)
     
     if (!response.ok) {
