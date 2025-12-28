@@ -1,14 +1,14 @@
 <template>
   <main id="finance-page" class="news-container">
     <div class="header">
-      <h1><fa icon="fa-solid fa-chart-line" /> Finance & Business News</h1>
-      <p class="subtitle">Market updates, business insights, and financial news</p>
+      <h1><fa icon="fa-solid fa-chart-line" /> Finance News</h1>
+      <p class="subtitle">Markets, investments, and financial updates</p>
     </div>
     
     <!-- Loading State -->
     <div v-if="isLoading" class="loading-state">
       <div class="spinner"></div>
-      <p>Loading business articles...</p>
+      <p>Loading finance articles...</p>
     </div>
     
     <!-- Error State -->
@@ -25,7 +25,7 @@
     <div v-else-if="articles.length === 0" class="no-results">
       <fa icon="fa-solid fa-inbox" class="no-results-icon" />
       <h3>No articles found</h3>
-      <p>Check back later for more business and finance news</p>
+      <p>Check back later for more finance news</p>
     </div>
     
     <!-- Articles Grid -->
@@ -53,7 +53,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import NewsCard from './newsCard.vue'
-import { fetchNewsByCategory } from '../services/newsService'
+import { searchNews } from '../services/newsApi'
 
 const articles = ref([])
 const isLoading = ref(false)
@@ -69,17 +69,19 @@ const loadArticles = async () => {
   error.value = null
   
   try {
-    const data = await fetchNewsByCategory('business', currentPage.value)
+    const data = await searchNews({
+      q: 'finance business markets',
+      page: currentPage.value,
+      pageSize
+    })
     
-    if (data.status === 'error') {
-      error.value = data.message || 'Failed to fetch business articles.'
-      articles.value = []
-    } else if (data.articles) {
+    if (data.articles) {
       articles.value = data.articles
-      totalResults.value = Math.min(data.totalResults, 100)
+      totalResults.value = Math.min(data.totalResults || 0, 100)
     }
   } catch (err) {
-    error.value = 'An unexpected error occurred. Please try again.'
+    console.error('Error loading finance articles:', err)
+    error.value = err.message || 'Failed to fetch finance articles.'
     articles.value = []
   } finally {
     isLoading.value = false
@@ -131,7 +133,7 @@ onMounted(() => {
       letter-spacing: -1px;
       
       fa {
-        color: var(--accent);
+        color: var(--primary);
         font-size: 2.3rem;
       }
     }
@@ -208,7 +210,7 @@ onMounted(() => {
     
     .no-results-icon {
       font-size: 4.5rem;
-      color: var(--accent);
+      color: var(--primary);
       margin-bottom: 1rem;
       opacity: 0.4;
     }
@@ -267,6 +269,28 @@ onMounted(() => {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

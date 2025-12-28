@@ -2,7 +2,7 @@
   <main id="technology-page" class="news-container">
     <div class="header">
       <h1><fa icon="fa-solid fa-microchip" /> Technology News</h1>
-      <p class="subtitle">Latest tech innovations, gadgets, and industry updates</p>
+      <p class="subtitle">Latest tech innovations and developments</p>
     </div>
     
     <!-- Loading State -->
@@ -53,7 +53,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import NewsCard from './newsCard.vue'
-import { fetchNewsByCategory } from '../services/newsService'
+import { fetchTopHeadlines } from '../services/newsApi'
 
 const articles = ref([])
 const isLoading = ref(false)
@@ -69,17 +69,19 @@ const loadArticles = async () => {
   error.value = null
   
   try {
-    const data = await fetchNewsByCategory('technology', currentPage.value)
+    const data = await fetchTopHeadlines({
+      category: 'technology',
+      page: currentPage.value,
+      pageSize
+    })
     
-    if (data.status === 'error') {
-      error.value = data.message || 'Failed to fetch technology articles.'
-      articles.value = []
-    } else if (data.articles) {
+    if (data.articles) {
       articles.value = data.articles
-      totalResults.value = Math.min(data.totalResults, 100)
+      totalResults.value = Math.min(data.totalResults || 0, 100)
     }
   } catch (err) {
-    error.value = 'An unexpected error occurred. Please try again.'
+    console.error('Error loading technology articles:', err)
+    error.value = err.message || 'Failed to fetch technology articles.'
     articles.value = []
   } finally {
     isLoading.value = false
@@ -131,7 +133,7 @@ onMounted(() => {
       letter-spacing: -1px;
       
       fa {
-        color: var(--secondary);
+        color: var(--primary);
         font-size: 2.3rem;
       }
     }
@@ -208,7 +210,7 @@ onMounted(() => {
     
     .no-results-icon {
       font-size: 4.5rem;
-      color: var(--secondary);
+      color: var(--primary);
       margin-bottom: 1rem;
       opacity: 0.4;
     }
@@ -267,6 +269,28 @@ onMounted(() => {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
