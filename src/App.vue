@@ -1,7 +1,7 @@
 <template>
   <div class="app" :class="{ 'dark-mode': isDarkMode }">
     <Navbar :is-dark="isDarkMode" @toggle-dark-mode="toggleDarkMode" />
-    <main>
+    <main class="main-content">
       <router-view />
     </main>
   </div>
@@ -114,7 +114,6 @@ const applyDarkMode = (isDark) => {
   html, body {
     height: 100%;
     width: 100%;
-    overflow-x: hidden;
   }
 
   body {
@@ -124,6 +123,8 @@ const applyDarkMode = (isDark) => {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Disable body scrollbar */
+    overflow: hidden;
   }
 
   button {
@@ -151,8 +152,9 @@ const applyDarkMode = (isDark) => {
     min-height: 100vh;
     background: var(--bg-primary);
     transition: background-color 0.3s ease;
+    overflow: hidden;
 
-    main {
+    main.main-content {
       flex: 1;
       padding: 2rem;
       background: 
@@ -164,10 +166,11 @@ const applyDarkMode = (isDark) => {
         var(--bg-primary);
       color: var(--text-primary);
       transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-y: scroll;
       overflow-x: hidden;
-      overflow-y: auto;
-      /* Add scrollbar-gutter to prevent layout shift and position scrollbar to the right of navbar */
-      scrollbar-gutter: stable;
+      /* Scrollbar styling */
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color-alt) var(--bg-primary);
 
       @media (max-width: 768px) {
         padding: 1.5rem 1rem;
@@ -176,6 +179,25 @@ const applyDarkMode = (isDark) => {
       @media (max-width: 480px) {
         padding: 1rem 0.75rem;
       }
+    }
+  }
+
+  /* Chrome/Edge/Safari scrollbar styling for main content */
+  main.main-content::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  main.main-content::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+  }
+
+  main.main-content::-webkit-scrollbar-thumb {
+    background: var(--border-color-alt);
+    border-radius: 5px;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: var(--grey);
     }
   }
 
@@ -355,32 +377,6 @@ const applyDarkMode = (isDark) => {
       background: var(--accent-light);
       color: var(--accent);
     }
-  }
-
-  // Scrollbar styling - positioned to not overlap navbar
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: var(--bg-primary);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: var(--border-color-alt);
-    border-radius: 5px;
-    transition: background 0.2s ease;
-
-    &:hover {
-      background: var(--grey);
-    }
-  }
-
-  /* Firefox scrollbar styling */
-  * {
-    scrollbar-color: var(--border-color-alt) var(--bg-primary);
-    scrollbar-width: thin;
   }
 
   // Typography
