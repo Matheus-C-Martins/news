@@ -16,9 +16,9 @@ const routes=[
         path: baseURL
     },
     {
-        name:'Weather',
+        name:'Science',
         component: Weather,
-        path: baseURL+'/weather'
+        path: baseURL+'/science'
     },
     {
         name:'Sports',
