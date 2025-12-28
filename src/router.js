@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from './components/home.vue'
-import Entertainment from './components/entertainment.vue'
+import Shows from './components/shows.vue'
 import Sports from './components/sports.vue'
-import Science from './components/science.vue'
+import Weather from './components/weather.vue'
 import Technology from './components/technology.vue'
-import Business from './components/business.vue'
+import Finance from './components/finance.vue'
 import Settings from './components/settings.vue'
 
 const BASE_URL = '/news'
@@ -16,9 +16,9 @@ const routes = [
     component: Home
   },
   {
-    path: `${BASE_URL}/entertainment`,
-    name: 'Entertainment',
-    component: Entertainment
+    path: `${BASE_URL}/shows`,
+    name: 'Shows',
+    component: Shows
   },
   {
     path: `${BASE_URL}/sports`,
@@ -26,9 +26,9 @@ const routes = [
     component: Sports
   },
   {
-    path: `${BASE_URL}/science`,
-    name: 'Science',
-    component: Science
+    path: `${BASE_URL}/weather`,
+    name: 'Weather',
+    component: Weather
   },
   {
     path: `${BASE_URL}/technology`,
@@ -36,9 +36,9 @@ const routes = [
     component: Technology
   },
   {
-    path: `${BASE_URL}/business`,
-    name: 'Business',
-    component: Business
+    path: `${BASE_URL}/finance`,
+    name: 'Finance',
+    component: Finance
   },
   {
     path: `${BASE_URL}/settings`,
