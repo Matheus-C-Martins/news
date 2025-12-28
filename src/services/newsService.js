@@ -115,13 +115,12 @@ export async function searchNews(query, sortBy = 'relevancy', page = 1, language
 }
 
 /**
- * Get top headlines for a specific country
- * @param {string} country - Country code (us, gb, fr, de, etc.). If not provided, uses country for current language
+ * Get top headlines for a specific language
  * @param {number} page - Page number
  * @param {string} language - Optional language code. If not provided, uses current language from settings
  * @returns {Promise<Object>} - Headlines
  */
-export async function fetchTopHeadlines(country = null, page = 1, language = null) {
+export async function fetchTopHeadlines(page = 1, language = null) {
   if (!VERCEL_API_URL) {
     return {
       articles: [],
