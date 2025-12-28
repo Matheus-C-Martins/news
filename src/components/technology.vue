@@ -2,7 +2,7 @@
   <main id="technology-page" class="news-container">
     <div class="header">
       <h1><fa icon="fa-solid fa-microchip" /> Technology News</h1>
-      <p class="subtitle">Latest tech innovations and industry updates</p>
+      <p class="subtitle">Latest tech innovations, gadgets, and industry updates</p>
     </div>
     
     <!-- Loading State -->
@@ -16,7 +16,7 @@
       <fa icon="fa-solid fa-exclamation-triangle" class="error-icon" />
       <h3>Oops! Something went wrong</h3>
       <p>{{ error }}</p>
-      <button @click="retryFetch" class="retry-button">
+      <button @click="retryFetch" class="btn btn-primary">
         <fa icon="fa-solid fa-refresh" /> Try Again
       </button>
     </div>
@@ -25,7 +25,7 @@
     <div v-else-if="articles.length === 0" class="no-results">
       <fa icon="fa-solid fa-inbox" class="no-results-icon" />
       <h3>No articles found</h3>
-      <p>Check back later for more tech news</p>
+      <p>Check back later for more technology news</p>
     </div>
     
     <!-- Articles Grid -->
@@ -39,11 +39,11 @@
     
     <!-- Pagination -->
     <div v-if="totalResults > 0 && articles.length > 0" class="pagination">
-      <button @click="previousPage" :disabled="currentPage === 1" class="pagination-button">
+      <button @click="previousPage" :disabled="currentPage === 1" class="btn btn-secondary">
         <fa icon="fa-solid fa-chevron-left" /> Previous
       </button>
-      <div class="page-info">Page {{ currentPage }} of {{ totalPages }}</div>
-      <button @click="nextPage" :disabled="currentPage >= totalPages" class="pagination-button">
+      <div class="page-info">Page <span>{{ currentPage }}</span> of <span>{{ totalPages }}</span></div>
+      <button @click="nextPage" :disabled="currentPage >= totalPages" class="btn btn-secondary">
         Next <fa icon="fa-solid fa-chevron-right" />
       </button>
     </div>
@@ -117,24 +117,29 @@ onMounted(() => {
   margin: 0 auto;
   
   .header {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    animation: slideInUp 0.5s ease-out;
     
     h1 {
       font-size: 2.5rem;
-      color: var(--dark);
-      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
       display: flex;
       align-items: center;
       gap: 1rem;
+      font-weight: 800;
+      letter-spacing: -1px;
       
       fa {
-        color: var(--primary);
+        color: var(--secondary);
+        font-size: 2.3rem;
       }
     }
     
     .subtitle {
-      font-size: 1.1rem;
-      color: var(--grey);
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      margin: 0;
     }
   }
   
@@ -145,23 +150,30 @@ onMounted(() => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4rem 2rem;
+    padding: 5rem 2rem;
     text-align: center;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, calc(var(--glass-opacity) * 0.6));
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    
+    html.dark-mode & {
+      background: rgba(30, 41, 59, calc(var(--glass-opacity) * 1.2));
+    }
     
     p {
-      color: var(--grey);
-      margin: 0.5rem 0 0 0;
+      color: var(--text-secondary);
+      margin: 0.75rem 0 0 0;
     }
   }
   
   .loading-state {
     .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid var(--light);
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--border-color);
       border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 1s linear infinite;
@@ -170,62 +182,50 @@ onMounted(() => {
   }
   
   .error-state {
-    background: rgba(192, 21, 47, 0.05);
-    border: 1px solid rgba(192, 21, 47, 0.2);
+    background: rgba(192, 21, 47, 0.06);
+    border: 1px solid rgba(192, 21, 47, 0.15);
     
     .error-icon {
-      font-size: 3rem;
-      color: var(--dark);
+      font-size: 3.5rem;
+      color: var(--text-primary);
       margin-bottom: 1rem;
+      opacity: 0.8;
     }
     
     h3 {
-      color: var(--dark);
-      margin: 0;
-    }
-    
-    .retry-button {
-      margin-top: 1rem;
-      background: var(--dark);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      
-      &:hover {
-        background: var(--dark-alt);
-      }
+      color: var(--text-primary);
+      margin: 0 0 0.5rem 0;
+      font-size: 1.3rem;
     }
   }
   
   .no-results {
-    background: linear-gradient(135deg, var(--light), white);
+    background: linear-gradient(
+      135deg,
+      rgba(16, 185, 129, 0.05) 0%,
+      rgba(139, 92, 246, 0.05) 100%
+    );
     
     .no-results-icon {
-      font-size: 4rem;
-      color: var(--grey);
+      font-size: 4.5rem;
+      color: var(--secondary);
       margin-bottom: 1rem;
-      opacity: 0.5;
+      opacity: 0.4;
     }
     
     h3 {
-      color: var(--dark);
+      color: var(--text-primary);
       margin: 0 0 0.5rem 0;
+      font-size: 1.3rem;
     }
   }
   
   .articles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    animation: fadeIn 0.5s ease-out 0.2s both;
   }
   
   .pagination {
@@ -233,41 +233,33 @@ onMounted(() => {
     align-items: center;
     justify-content: center;
     gap: 2rem;
-    padding: 2rem;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, calc(var(--glass-opacity) * 0.6));
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     
-    .pagination-button {
+    html.dark-mode & {
+      background: rgba(30, 41, 59, calc(var(--glass-opacity) * 1.2));
+    }
+    
+    .btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      
-      &:hover:not(:disabled) {
-        background: var(--primary-alt);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(74, 222, 128, 0.2);
-      }
-      
-      &:disabled {
-        background: var(--light);
-        color: var(--grey);
-        cursor: not-allowed;
-        opacity: 0.5;
-      }
     }
     
     .page-info {
-      color: var(--dark);
+      color: var(--text-primary);
       font-weight: 600;
+      white-space: nowrap;
+      
+      span {
+        color: var(--primary);
+        font-weight: 700;
+      }
     }
   }
 }
@@ -280,22 +272,72 @@ onMounted(() => {
 
 @media (max-width: 1024px) {
   .news-container {
+    .header {
+      margin-bottom: 2rem;
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .subtitle {
+        font-size: 1.05rem;
+      }
+    }
+    
     .articles-grid {
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1.5rem;
+    }
+    
+    .pagination {
+      flex-direction: column;
+      gap: 1.5rem;
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   }
 }
 
 @media (max-width: 640px) {
   .news-container {
-    .header h1 {
-      font-size: 1.5rem;
+    .header {
+      h1 {
+        font-size: 1.5rem;
+        gap: 0.5rem;
+        
+        fa {
+          font-size: 1.3rem;
+        }
+      }
+      
+      .subtitle {
+        font-size: 0.95rem;
+      }
     }
     
     .articles-grid {
       grid-template-columns: 1fr;
       gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .pagination {
+      padding: 1.5rem;
+      gap: 1rem;
+      
+      .page-info {
+        order: 3;
+        width: 100%;
+        text-align: center;
+        font-size: 0.9rem;
+      }
+      
+      .btn {
+        width: 100%;
+      }
     }
   }
 }
