@@ -80,39 +80,17 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import {
   LANGUAGES,
-  SOURCE_BY_LANGUAGE,
-  getCurrentLanguage,
-  getSelectedSourcesForLanguage,
-  saveSelectedSourcesForLanguage
+  getCurrentLanguage
   // setLanguage - Currently disabled as language selection feature is coming soon
 } from '../services/languages'
 
 const isDark = ref(false)
 const currentLanguage = ref('en')
-const sourceSearchQuery = ref('')
-const selectedSources = ref([])
 
 const languages = Object.values(LANGUAGES)
-
-const availableSources = computed(() => {
-  return SOURCE_BY_LANGUAGE[currentLanguage.value] || []
-})
-
-const filteredSources = computed(() => {
-  if (!sourceSearchQuery.value.trim()) {
-    return availableSources.value
-  }
-  const query = sourceSearchQuery.value.toLowerCase()
-  return availableSources.value.filter(
-    source =>
-      source.name.toLowerCase().includes(query) ||
-      source.category.toLowerCase().includes(query) ||
-      source.country.toLowerCase().includes(query)
-  )
-})
 
 onMounted(() => {
   // Load dark mode preference
@@ -125,31 +103,7 @@ onMounted(() => {
 
   // Load language preference
   currentLanguage.value = getCurrentLanguage()
-
-  // Load selected sources for current language
-  selectedSources.value = getSelectedSourcesForLanguage(currentLanguage.value)
 })
-
-// Watch for language changes
-watch(currentLanguage, (newLanguage) => {
-  // Save sources for previous language
-  const previousLanguage = getCurrentLanguage()
-  if (previousLanguage && previousLanguage !== newLanguage) {
-    saveSelectedSourcesForLanguage(previousLanguage, selectedSources.value)
-  }
-
-  // Load sources for new language
-  selectedSources.value = getSelectedSourcesForLanguage(newLanguage)
-})
-
-// Watch for source changes and save them
-watch(
-  selectedSources,
-  (newSources) => {
-    saveSelectedSourcesForLanguage(currentLanguage.value, newSources)
-  },
-  { deep: true }
-)
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value
@@ -160,11 +114,6 @@ const toggleDarkMode = () => {
   } else {
     html.classList.remove('dark-mode')
   }
-}
-
-const clearAllSources = () => {
-  selectedSources.value = []
-  saveSelectedSourcesForLanguage(currentLanguage.value, [])
 }
 </script>
 
