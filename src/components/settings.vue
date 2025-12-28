@@ -6,27 +6,32 @@
     </div>
 
     <!-- Language Settings -->
-    <section class="settings-section">
+    <section class="settings-section disabled-section">
       <div class="section-header">
         <fa icon="fa-solid fa-globe" class="section-icon" />
         <h2>Language</h2>
+        <span class="coming-soon-badge">Coming Soon</span>
       </div>
       <div class="settings-content">
         <p class="setting-description">Choose your preferred language for the application and news sources</p>
-        <div class="language-grid">
+        <div class="disabled-overlay">
+          <div class="coming-soon-message">
+            <fa icon="fa-solid fa-rocket" class="rocket-icon" />
+            <p>Language selection features will be available soon!</p>
+            <p class="message-subtext">We're working on bringing multi-language support to NewsHub.</p>
+          </div>
+        </div>
+        <div class="language-grid disabled">
           <button
             v-for="lang in languages"
             :key="lang.code"
-            @click="changeLanguage(lang.code)"
+            disabled
             :class="['language-btn', { active: currentLanguage === lang.code }]"
           >
             <span class="lang-flag">{{ lang.flag }}</span>
             <span class="lang-name">{{ lang.name }}</span>
           </button>
         </div>
-        <p class="language-info" v-if="currentLanguage">
-          📰 Showing {{ availableSources.length }} news sources available in {{ LANGUAGES[currentLanguage].name }}
-        </p>
       </div>
     </section>
 
@@ -273,9 +278,19 @@ const clearAllSources = () => {
     border-radius: 14px;
     box-shadow: var(--shadow-sm);
     animation: slideInUp 0.5s ease-out;
+    position: relative;
 
     html.dark-mode & {
       background: rgba(30, 41, 59, calc(var(--glass-opacity) * 1.2));
+    }
+
+    &.disabled-section {
+      opacity: 0.7;
+      background: rgba(255, 255, 255, calc(var(--glass-opacity) * 0.4));
+
+      html.dark-mode & {
+        background: rgba(30, 41, 59, calc(var(--glass-opacity) * 0.6));
+      }
     }
 
     .section-header {
@@ -295,6 +310,20 @@ const clearAllSources = () => {
         margin: 0;
         font-size: 1.5rem;
         color: var(--text-primary);
+        flex: 1;
+      }
+
+      .coming-soon-badge {
+        display: inline-block;
+        padding: 0.375rem 0.875rem;
+        background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+        color: white;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
       }
     }
 
@@ -318,12 +347,68 @@ const clearAllSources = () => {
     }
   }
 
+  // Disabled Overlay
+  .disabled-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(2px);
+    border-radius: 14px;
+    pointer-events: none;
+    z-index: 10;
+
+    html.dark-mode & {
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .coming-soon-message {
+      text-align: center;
+      color: var(--text-primary);
+      pointer-events: none;
+
+      .rocket-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      p {
+        margin: 0.5rem 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+
+        &:first-of-type {
+          color: var(--primary);
+        }
+
+        &.message-subtext {
+          font-size: 0.9rem;
+          color: var(--text-secondary);
+          font-weight: 400;
+        }
+      }
+    }
+  }
+
   // Language Settings
   .language-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 1rem;
     margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
 
     .language-btn {
       padding: 1rem;
@@ -347,10 +432,15 @@ const clearAllSources = () => {
         font-weight: 500;
       }
 
-      &:hover {
+      &:hover:not(:disabled) {
         border-color: var(--primary);
         background: rgba(16, 185, 129, 0.1);
         transform: translateY(-2px);
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
       }
 
       &.active {
@@ -614,6 +704,15 @@ const clearAllSources = () => {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
 
