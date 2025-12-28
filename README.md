@@ -1,10 +1,10 @@
-# 📰 News Aggregator App
+# 📰 NewsHub - News Aggregator App
 
-A modern, responsive Vue 3 news aggregator application powered by the **NewsAPI**. Browse news by categories, search for specific topics, and enjoy a beautiful dark mode experience.
+A modern, responsive Vue 3 news aggregator application powered by **NewsAPI.org**. Browse news by categories, search for specific topics, and enjoy a beautiful dark mode experience.
 
 ## ✨ Features
 
-- 🌍 **Multiple Categories**: Browse news from General, Entertainment, Sports, Technology, Science, and Finance
+- 🌍 **Multiple Categories**: Browse news from General, Entertainment, Sports, Technology, Science, and Business
 - 🔍 **Advanced Search**: Search news articles by keywords with relevancy sorting
 - 🌙 **Dark Mode**: Toggle between light and dark themes with persistent storage
 - 📱 **Responsive Design**: Optimized for desktop, tablet, and mobile devices
@@ -14,6 +14,7 @@ A modern, responsive Vue 3 news aggregator application powered by the **NewsAPI*
 - ⏱️ **Relative Timestamps**: Shows how long ago articles were published
 - 🖼️ **Image Fallbacks**: Graceful handling of missing article images
 - ⌨️ **Keyboard Support**: Enter key to search, smooth scrolling on pagination
+- 🛡️ **Security**: Content Security Policy, input validation, and secure headers
 
 ## 🚀 Quick Start
 
@@ -43,99 +44,140 @@ A modern, responsive Vue 3 news aggregator application powered by the **NewsAPI*
    
    Edit `.env.local` and add your NewsAPI key:
    ```
-   VUE_APP_NEWS_API_KEY=your_api_key_here
+   VITE_NEWS_API_KEY=your_api_key_here
    ```
    
    Get your free API key at: [https://newsapi.org/register](https://newsapi.org/register)
 
 4. **Start the development server**
    ```bash
-   npm run serve
+   npm run dev
    ```
    
-   The app will be available at `http://localhost:8080`
+   The app will be available at `http://localhost:5173`
+
+5. **Build for production**
+   ```bash
+   npm run build
+   ```
 
 ## 🏗️ Project Structure
 
 ```
 src/
 ├── components/
-│   ├── sidebar.vue           # Navigation sidebar with dark mode toggle
-│   ├── home.vue              # General news & search page
-│   ├── shows.vue             # Entertainment news
-│   ├── sports.vue            # Sports news
-│   ├── weather.vue           # Science & weather news
-│   ├── technology.vue        # Technology news
-│   ├── finance.vue           # Finance & business news
-│   ├── newsCard.vue          # Individual article card component
-│   └── settings.vue          # Settings page
+│   ├── navbar.vue              # Main navigation bar
+│   ├── home.vue                # General news & search page
+│   ├── entertainment.vue       # Entertainment news
+│   ├── sports.vue              # Sports news
+│   ├── science.vue             # Science news
+│   ├── technology.vue          # Technology news
+│   ├── business.vue            # Business & finance news
+│   ├── newsCard.vue            # Individual article card
+│   └── settings.vue            # Settings page (dark mode, language)
 ├── services/
-│   └── newsService.js        # NewsAPI integration & utility functions
-├── assets/
-│   └── logo.png              # Application logo
-├── router.js                 # Vue Router configuration
-├── App.vue                   # Main app component
-└── main.js                   # Application entry point
+│   ├── newsApi.js              # NewsAPI integration with validation
+│   └── languages.js            # Language configuration (for future use)
+├── composables/
+│   └── useSettings.js          # Dark mode & settings management
+├── assets/                     # Static assets
+├── router.js                   # Vue Router configuration
+├── App.vue                     # Root component
+└── main.js                     # Application entry point
 ```
 
 ## 🎨 Design System
 
-### Color Palette
+### Color Variables
 
-**Light Mode**
-- Primary: `#4ade80` (Green)
-- Primary Alt: `#22c55e`
-- Dark: `#1e293b`
-- Light: `#f1f5f9`
-- Text Primary: `#1e293b`
-- Text Secondary: `#64748b`
-- Background: `#ffffff`
+The app uses CSS variables for theming. See `src/App.vue` for the complete design system.
 
-**Dark Mode**
-- Background Primary: `#0f172a`
-- Background Secondary: `#1e293b`
-- Text Primary: `#f1f5f9`
-- Text Secondary: `#cbd5e1`
-- Primary: `#4ade80` (Same green)
+**Key Colors:**
+- **Primary**: `#10b981` (Green)
+- **Secondary**: `#8b5cf6` (Purple)
+- **Accent**: `#f59e0b` (Amber)
+- **Dark Background**: `#0f172a`
+- **Light Background**: `#ffffff`
+
+### Components
+
+- `.btn` - Button element with variants (primary, secondary, outline)
+- `.card` - Card component with hover effects
+- `.badge` - Badge component for tags and labels
+- `.glass-card` - Glassmorphism card style
 
 ## 🔧 Available Scripts
 
 ### Development
 ```bash
-npm run serve    # Start development server with hot reload
+npm run dev      # Start development server with hot reload (Vite)
+npm run dev:all  # Start with all features enabled
 ```
 
 ### Production
 ```bash
-npm run build    # Build for production
-npm run lint     # Run ESLint
+npm run build    # Build for production (output to dist/)
+npm run preview  # Preview production build locally
+npm run lint     # Run ESLint to check code quality
 ```
 
 ## 📖 API Integration
 
-This app uses the **NewsAPI.org** free tier:
+This app uses **NewsAPI.org** free tier:
 - 100 requests per day
 - Access to top headlines and everything endpoints
 - Category-based filtering
 - Sorting options (relevancy, popularity, publishedAt)
 
 ### Available News Categories
-- `general` - General news
-- `entertainment` - Entertainment news (Shows)
+- `general` - General news (default)
+- `entertainment` - Entertainment news
 - `sports` - Sports news
 - `technology` - Technology news
-- `science` - Science news (Weather)
-- `business` - Business & Finance news
+- `science` - Science & weather news
+- `business` - Business & finance news
 - `health` - Health news
 
 See [NewsAPI Documentation](https://newsapi.org/docs) for more details.
 
-## 🔐 Environment Variables
+## 🔐 Security
 
-Create a `.env.local` file in the project root:
+The application includes several security features:
+
+### Content Security Policy (CSP)
+- Scripts limited to same-origin only
+- External API calls whitelisted to newsapi.org
+- Prevents XSS attacks
+
+### Input Validation
+- Search queries validated and sanitized
+- Page numbers validated (1-100)
+- Categories whitelisted
+- Maximum query length of 500 characters
+
+### Environment Variables
+- API keys stored in GitHub Secrets (production)
+- `.env.local` never committed to version control
+- Use `.env.example` as a template
+
+### Security Headers
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: DENY
+- X-XSS-Protection: 1; mode=block
+- Strict-Transport-Security (HTTPS enforcement)
+
+See [SECURITY.md](./SECURITY.md) for more details.
+
+## 📝 Environment Variables
+
+Required environment variables (see `.env.example`):
 
 ```env
-VUE_APP_NEWS_API_KEY=your_api_key_here
+# NewsAPI.org API Key (required)
+VITE_NEWS_API_KEY=your_api_key_here
+
+# Optional: Vercel API URL (for future backend integration)
+VITE_VERCEL_API_URL=https://api.vercel.com
 ```
 
 **Important Security Notes:**
@@ -146,7 +188,7 @@ VUE_APP_NEWS_API_KEY=your_api_key_here
 ## 🎯 Features Explained
 
 ### Dark Mode
-- Toggle using the sidebar button (moon/sun icon)
+- Toggle using the navbar button (moon/sun icon)
 - Respects system preferences on first visit
 - Preference persists in localStorage
 - Smooth CSS transitions between modes
@@ -154,7 +196,7 @@ VUE_APP_NEWS_API_KEY=your_api_key_here
 
 ### Search
 - Search by keywords across all news sources
-- Results sorted by relevancy (can be customized)
+- Results sorted by relevancy (customizable)
 - Clear button to quickly reset search
 - Pagination support for large result sets
 - Real-time search hints
@@ -175,8 +217,8 @@ VUE_APP_NEWS_API_KEY=your_api_key_here
 ## 📱 Responsive Design
 
 **Breakpoints:**
-- **Desktop** (1024px+): Full layout with expanded sidebar
-- **Tablet** (640px - 1024px): Collapsed sidebar, adjusted grid
+- **Desktop** (1024px+): Full layout with expanded content
+- **Tablet** (640px - 1024px): Adjusted grid and spacing
 - **Mobile** (<640px): Single-column layout, optimized touch targets
 
 All components automatically adapt to screen size.
@@ -186,10 +228,10 @@ All components automatically adapt to screen size.
 ### "API key not configured" Error
 **Solution**: 
 1. Make sure `.env.local` exists in your project root
-2. Verify it contains: `VUE_APP_NEWS_API_KEY=your_actual_key`
+2. Verify it contains: `VITE_NEWS_API_KEY=your_actual_key`
 3. Restart the development server:
    ```bash
-   npm run serve
+   npm run dev
    ```
 
 ### No articles loading
@@ -209,74 +251,81 @@ This is normal behavior - some articles don't have associated images. The app di
 
 ## 🚀 Deployment
 
-### Netlify
+### GitHub Pages (Recommended for free hosting)
 1. Push code to GitHub
-2. Connect repository to [Netlify](https://netlify.com)
-3. Set environment variable in Netlify settings:
-   - Key: `VUE_APP_NEWS_API_KEY`
-   - Value: Your API key
-4. Deploy!
+2. Repository is already configured for GitHub Pages deployment
+3. GitHub Actions automatically builds and deploys on push to main
+4. Set environment variable in GitHub Actions secrets:
+   - Go to Settings → Secrets → Actions
+   - Add: `VITE_NEWS_API_KEY=your_api_key`
+5. Site will be available at: `https://matheus-c-martins.github.io/news/`
 
 ### Vercel
 1. Push code to GitHub
 2. Import project in [Vercel](https://vercel.com)
-3. Add environment variable:
-   - Name: `VUE_APP_NEWS_API_KEY`
+3. Add environment variable in Vercel settings:
+   - Name: `VITE_NEWS_API_KEY`
    - Value: Your API key
 4. Deploy!
 
-### Docker
-```dockerfile
-FROM node:16-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-
-FROM node:16-alpine
-WORKDIR /app
-RUN npm install -g serve
-COPY --from=0 /app/dist ./dist
-EXPOSE 3000
-CMD ["serve", "-s", "dist", "-l", "3000"]
-```
+### Netlify
+1. Push code to GitHub
+2. Connect repository to [Netlify](https://netlify.com)
+3. Set environment variable in Netlify settings:
+   - Key: `VITE_NEWS_API_KEY`
+   - Value: Your API key
+4. Deploy!
 
 ## 💻 Technologies Used
 
-- **Vue 3** - Progressive JavaScript framework
+- **Vue 3** - Progressive JavaScript framework (Composition API)
 - **Vue Router 4** - Client-side routing
-- **SCSS** - Styling with CSS variables
+- **Vite** - Modern build tool and dev server
+- **SCSS** - CSS preprocessor with CSS variables
 - **Font Awesome 6** - Icon library
 - **NewsAPI** - News data provider
-- **Fetch API** - HTTP requests
+- **Fetch API** - HTTP requests with validation
 
 ## 🛠️ Service Functions
 
-### `newsService.js` API
+### `newsApi.js` API
 
-#### `fetchNewsByCategory(category, page)`
+#### `fetchTopHeadlines(options)`
 ```javascript
-const data = await fetchNewsByCategory('technology', 1)
+const data = await fetchTopHeadlines({ 
+  page: 1,
+  pageSize: 20,
+  language: 'en' // optional
+})
 // Returns: { articles: [...], totalResults: 123, status: 'ok' }
 ```
 
-#### `searchNews(query, sortBy, page)`
+#### `searchNews(options)`
 ```javascript
-const results = await searchNews('AI', 'relevancy', 1)
+const results = await searchNews({ 
+  q: 'AI', 
+  sortBy: 'relevancy',
+  page: 1,
+  pageSize: 20,
+  language: 'en' // optional
+})
 // Returns: { articles: [...], totalResults: 5000, status: 'ok' }
 ```
 
-#### `fetchTopHeadlines(country, page)`
+#### `fetchTopHeadlines(options)` - Category based
 ```javascript
-const headlines = await fetchTopHeadlines('us', 1)
-// Returns: { articles: [...], totalResults: 38, status: 'ok' }
+const categoryNews = await fetchTopHeadlines({ 
+  category: 'technology',
+  page: 1,
+  pageSize: 20
+})
 ```
 
 ## 📚 Learning Resources
 
 - [Vue 3 Documentation](https://vuejs.org/)
 - [Vue Router Documentation](https://router.vuejs.org/)
+- [Vite Documentation](https://vitejs.dev/)
 - [NewsAPI Documentation](https://newsapi.org/docs)
 - [FontAwesome Icons](https://fontawesome.com/icons)
 - [SCSS Documentation](https://sass-lang.com/)
@@ -299,6 +348,7 @@ This project is open source and available under the MIT License.
 - [NewsAPI.org](https://newsapi.org/) for providing the news data
 - [Vue.js](https://vuejs.org/) team for the amazing framework
 - [Font Awesome](https://fontawesome.com/) for the icons
+- [Vite](https://vitejs.dev/) for the modern build tool
 
 ---
 
