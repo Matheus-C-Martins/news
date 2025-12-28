@@ -1,13 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
-// Page Components
-import Home from './pages/Home.vue'
-import Entertainment from './pages/Entertainment.vue'
-import Sports from './pages/Sports.vue'
-import Science from './pages/Science.vue'
-import Technology from './pages/Technology.vue'
-import Business from './pages/Business.vue'
-import Settings from './pages/Settings.vue'
+import Home from './components/home.vue'
+import Entertainment from './components/entertainment.vue'
+import Sports from './components/sports.vue'
+import Science from './components/science.vue'
+import Technology from './components/technology.vue'
+import Business from './components/business.vue'
+import Settings from './components/settings.vue'
 
 const BASE_URL = '/news'
 
