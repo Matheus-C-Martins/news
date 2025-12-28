@@ -43,16 +43,6 @@
 
       <!-- Right Side Controls -->
       <div class="navbar__controls">
-        <!-- Dark Mode Toggle -->
-        <button
-          @click="toggleDarkMode"
-          class="navbar__btn navbar__btn--icon"
-          :title="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
-          aria-label="Toggle dark mode"
-        >
-          <fa :icon="isDarkMode ? 'fa-solid fa-sun' : 'fa-solid fa-moon'" class="navbar__icon" />
-        </button>
-
         <!-- Settings Link -->
         <router-link to="/news/settings" class="navbar__btn navbar__btn--icon" @click="closeMobileMenu">
           <fa icon="fa-solid fa-gear" class="navbar__icon" />
@@ -116,10 +106,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useSettings } from '@/composables/useSettings'
 
 const isMobileMenuOpen = ref(false)
-const { isDarkMode, toggleDarkMode } = useSettings()
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
@@ -145,6 +133,7 @@ const closeMobileMenu = () => {
   z-index: 100;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  color: white;
 
   html.dark-mode & {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
