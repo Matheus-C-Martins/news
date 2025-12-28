@@ -62,7 +62,8 @@
       </div>
     </section>
 
-    <!-- News Sources Settings -->
+    <!-- News Sources Settings - Hidden for now -->
+    <!-- 
     <section class="settings-section">
       <div class="section-header">
         <fa icon="fa-solid fa-newspaper" class="section-icon" />
@@ -126,6 +127,7 @@
         </div>
       </div>
     </section>
+    -->
 
     <!-- About Section -->
     <section class="settings-section">
@@ -497,179 +499,6 @@ const clearAllSources = () => {
     }
   }
 
-  // News Sources Settings
-  .source-controls {
-    margin-bottom: 2rem;
-
-    .control-group {
-      .search-label {
-        display: block;
-        margin-bottom: 0.75rem;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .search-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-
-        .search-icon {
-          position: absolute;
-          left: 16px;
-          color: var(--primary);
-          pointer-events: none;
-          font-size: 1rem;
-        }
-
-        .source-search {
-          width: 100%;
-          padding: 12px 40px 12px 40px;
-          font-size: 0.95rem;
-          border: 2px solid var(--border-color);
-          border-radius: 10px;
-          background: var(--bg-secondary);
-          color: var(--text-primary);
-          transition: all 0.2s ease;
-
-          &:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
-          }
-
-          &::placeholder {
-            color: var(--text-secondary);
-          }
-        }
-      }
-    }
-  }
-
-  .sources-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-
-    .no-sources {
-      grid-column: 1 / -1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 3rem 2rem;
-      text-align: center;
-      color: var(--text-secondary);
-
-      fa {
-        font-size: 3rem;
-        opacity: 0.4;
-        margin-bottom: 1rem;
-      }
-    }
-
-    .source-card {
-      padding: 1.5rem;
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      background: var(--bg-secondary);
-      transition: all 0.2s ease;
-      cursor: pointer;
-
-      &:hover {
-        border-color: var(--primary);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
-        transform: translateY(-2px);
-      }
-
-      .source-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 0.75rem;
-        gap: 1rem;
-
-        .source-title {
-          font-weight: 600;
-          color: var(--text-primary);
-          cursor: pointer;
-          flex: 1;
-        }
-
-        .source-checkbox {
-          width: 20px;
-          height: 20px;
-          cursor: pointer;
-          accent-color: var(--primary);
-          flex-shrink: 0;
-          margin-top: 2px;
-        }
-      }
-
-      .source-description {
-        font-size: 0.85rem;
-        color: var(--text-secondary);
-        margin-bottom: 1rem;
-        margin: 0 0 1rem 0;
-      }
-
-      .source-meta {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-
-        .country-badge,
-        .category-badge {
-          display: inline-block;
-          padding: 0.375rem 0.75rem;
-          border-radius: 20px;
-          font-size: 0.75rem;
-          font-weight: 600;
-          background: rgba(16, 185, 129, 0.1);
-          color: var(--primary);
-        }
-      }
-    }
-  }
-
-  .sources-summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: rgba(16, 185, 129, 0.05);
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-
-    p {
-      margin: 0;
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-
-    .btn-clear-all {
-      padding: 0.5rem 1.25rem;
-      font-size: 0.9rem;
-      background: transparent;
-      color: var(--primary);
-      border: 2px solid var(--primary);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-weight: 600;
-
-      &:hover {
-        background: rgba(16, 185, 129, 0.1);
-        transform: translateY(-1px);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
-    }
-  }
-
   // About Section
   .about-info {
     padding: 1rem;
@@ -726,16 +555,6 @@ const clearAllSources = () => {
 
     .language-grid {
       grid-template-columns: repeat(2, 1fr);
-    }
-
-    .sources-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .sources-summary {
-      flex-direction: column;
-      gap: 1rem;
-      text-align: center;
     }
   }
 }
