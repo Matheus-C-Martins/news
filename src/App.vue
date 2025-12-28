@@ -2,13 +2,13 @@
   <div class="app" :class="{ 'dark-mode': isDarkMode }">
     <Navbar :is-dark="isDarkMode" />
     <main class="main-content">
-      <router-view :key="currentLanguage" />
+      <router-view :key="routeKey" />
     </main>
   </div>
 </template>
 
 <script setup>
-import { watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import Navbar from './components/navbar.vue'
 import { useSettings, isDarkMode, currentLanguage } from './composables/useSettings'
 
@@ -16,9 +16,19 @@ import { useSettings, isDarkMode, currentLanguage } from './composables/useSetti
 const { initializeSettings } = useSettings()
 initializeSettings()
 
-// Watch for changes and update the key for router-view to force re-render
+const routeKey = ref(0)
+
+// Watch for language changes via custom event
+onMounted(() => {
+  window.addEventListener('languageChanged', () => {
+    // Force re-render by updating the key
+    routeKey.value += 1
+  })
+})
+
+// Also watch the currentLanguage ref directly
 watch(currentLanguage, () => {
-  // Router-view will re-render due to key change
+  routeKey.value += 1
 })
 </script>
 
@@ -262,6 +272,7 @@ watch(currentLanguage, () => {
     cursor: pointer;
     transition: all 0.2s ease;
     text-decoration: none;
+    color: var(--text-primary);
 
     &:focus {
       outline: 2px solid var(--primary);
