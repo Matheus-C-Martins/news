@@ -114,6 +114,7 @@ const applyDarkMode = (isDark) => {
   html, body {
     height: 100%;
     width: 100%;
+    overflow-x: hidden;
   }
 
   body {
@@ -164,6 +165,9 @@ const applyDarkMode = (isDark) => {
       color: var(--text-primary);
       transition: background-color 0.3s ease, color 0.3s ease;
       overflow-x: hidden;
+      overflow-y: auto;
+      /* Add scrollbar-gutter to prevent layout shift and position scrollbar to the right of navbar */
+      scrollbar-gutter: stable;
 
       @media (max-width: 768px) {
         padding: 1.5rem 1rem;
@@ -353,14 +357,14 @@ const applyDarkMode = (isDark) => {
     }
   }
 
-  // Scrollbar styling
+  // Scrollbar styling - positioned to not overlap navbar
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+    background: var(--bg-primary);
   }
 
   ::-webkit-scrollbar-thumb {
@@ -371,6 +375,12 @@ const applyDarkMode = (isDark) => {
     &:hover {
       background: var(--grey);
     }
+  }
+
+  /* Firefox scrollbar styling */
+  * {
+    scrollbar-color: var(--border-color-alt) var(--bg-primary);
+    scrollbar-width: thin;
   }
 
   // Typography
