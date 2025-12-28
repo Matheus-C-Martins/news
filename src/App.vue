@@ -123,8 +123,6 @@ const applyDarkMode = (isDark) => {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Disable body scrollbar */
-    overflow: hidden;
   }
 
   button {
@@ -152,7 +150,6 @@ const applyDarkMode = (isDark) => {
     min-height: 100vh;
     background: var(--bg-primary);
     transition: background-color 0.3s ease;
-    overflow: hidden;
 
     main.main-content {
       flex: 1;
@@ -166,7 +163,7 @@ const applyDarkMode = (isDark) => {
         var(--bg-primary);
       color: var(--text-primary);
       transition: background-color 0.3s ease, color 0.3s ease;
-      overflow-y: scroll;
+      overflow-y: auto;
       overflow-x: hidden;
       /* Scrollbar styling */
       scrollbar-width: thin;
