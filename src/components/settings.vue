@@ -115,7 +115,7 @@
         <!-- Selected Count -->
         <div class="sources-summary">
           <p>{{ selectedSources.length }} source{{ selectedSources.length !== 1 ? 's' : '' }} selected</p>
-          <button @click="clearAllSources" class="btn btn-outline" v-if="selectedSources.length > 0">
+          <button @click="clearAllSources" class="btn-clear-all" v-if="selectedSources.length > 0">
             Clear All
           </button>
         </div>
@@ -554,9 +554,25 @@ const clearAllSources = () => {
       color: var(--text-primary);
     }
 
-    .btn-outline {
+    .btn-clear-all {
       padding: 0.5rem 1.25rem;
       font-size: 0.9rem;
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 600;
+
+      &:hover {
+        background: rgba(16, 185, 129, 0.1);
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
     }
   }
 
