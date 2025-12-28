@@ -2,7 +2,7 @@
   <nav class="navbar" :class="{ 'navbar--mobile-open': isMobileMenuOpen }">
     <div class="navbar__container">
       <!-- Logo -->
-      <router-link to="/" class="navbar__logo">
+      <router-link to="/news" class="navbar__logo">
         <fa icon="fa-solid fa-newspaper" />
         <span>NewsHub</span>
       </router-link>
@@ -10,37 +10,31 @@
       <!-- Desktop Navigation Menu -->
       <ul class="navbar__menu navbar__menu--desktop">
         <li>
-          <router-link to="/" class="navbar__link" @click="closeMobileMenu">
-            <fa icon="fa-solid fa-home" />
-            <span>All News</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/entertainment" class="navbar__link" @click="closeMobileMenu">
+          <router-link to="/news/entertainment" class="navbar__link" @click="closeMobileMenu">
             <fa icon="fa-solid fa-tv" />
             <span>Entertainment</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/sports" class="navbar__link" @click="closeMobileMenu">
+          <router-link to="/news/sports" class="navbar__link" @click="closeMobileMenu">
             <fa icon="fa-solid fa-football" />
             <span>Sports</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/science" class="navbar__link" @click="closeMobileMenu">
+          <router-link to="/news/science" class="navbar__link" @click="closeMobileMenu">
             <fa icon="fa-solid fa-flask" />
             <span>Science</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/technology" class="navbar__link" @click="closeMobileMenu">
+          <router-link to="/news/technology" class="navbar__link" @click="closeMobileMenu">
             <fa icon="fa-solid fa-microchip" />
             <span>Technology</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/business" class="navbar__link" @click="closeMobileMenu">
+          <router-link to="/news/business" class="navbar__link" @click="closeMobileMenu">
             <fa icon="fa-solid fa-briefcase" />
             <span>Business</span>
           </router-link>
@@ -60,7 +54,7 @@
         </button>
 
         <!-- Settings Link -->
-        <router-link to="/settings" class="navbar__btn navbar__btn--icon" @click="closeMobileMenu">
+        <router-link to="/news/settings" class="navbar__btn navbar__btn--icon" @click="closeMobileMenu">
           <fa icon="fa-solid fa-gear" class="navbar__icon" />
         </router-link>
 
@@ -81,37 +75,37 @@
     <!-- Mobile Navigation Menu -->
     <ul class="navbar__menu navbar__menu--mobile" v-if="isMobileMenuOpen">
       <li>
-        <router-link to="/" class="navbar__link" @click="closeMobileMenu">
+        <router-link to="/news/" class="navbar__link" @click="closeMobileMenu">
           <fa icon="fa-solid fa-home" />
           <span>All News</span>
         </router-link>
       </li>
       <li>
-        <router-link to="/entertainment" class="navbar__link" @click="closeMobileMenu">
+        <router-link to="/news/entertainment" class="navbar__link" @click="closeMobileMenu">
           <fa icon="fa-solid fa-tv" />
           <span>Entertainment</span>
         </router-link>
       </li>
       <li>
-        <router-link to="/sports" class="navbar__link" @click="closeMobileMenu">
+        <router-link to="/news/sports" class="navbar__link" @click="closeMobileMenu">
           <fa icon="fa-solid fa-football" />
           <span>Sports</span>
         </router-link>
       </li>
       <li>
-        <router-link to="/science" class="navbar__link" @click="closeMobileMenu">
+        <router-link to="/news/science" class="navbar__link" @click="closeMobileMenu">
           <fa icon="fa-solid fa-flask" />
           <span>Science</span>
         </router-link>
       </li>
       <li>
-        <router-link to="/technology" class="navbar__link" @click="closeMobileMenu">
+        <router-link to="/news/technology" class="navbar__link" @click="closeMobileMenu">
           <fa icon="fa-solid fa-microchip" />
           <span>Technology</span>
         </router-link>
       </li>
       <li>
-        <router-link to="/business" class="navbar__link" @click="closeMobileMenu">
+        <router-link to="/news/business" class="navbar__link" @click="closeMobileMenu">
           <fa icon="fa-solid fa-briefcase" />
           <span>Business</span>
         </router-link>
