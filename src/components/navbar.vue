@@ -10,27 +10,27 @@
       <!-- Desktop Menu -->
       <div class="navbar-menu" :class="{ active: isMobileMenuOpen }">
         <div class="nav-links">
-          <router-link to="/" class="nav-link" @click="isMobileMenuOpen = false">
+          <router-link to="/news" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-earth-europe" />
             <span>All News</span>
           </router-link>
-          <router-link to="/shows" class="nav-link" @click="isMobileMenuOpen = false">
+          <router-link to="/news/shows" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-film" />
             <span>Entertainment</span>
           </router-link>
-          <router-link to="/sports" class="nav-link" @click="isMobileMenuOpen = false">
+          <router-link to="/news/sports" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-medal" />
             <span>Sports</span>
           </router-link>
-          <router-link to="/weather" class="nav-link" @click="isMobileMenuOpen = false">
+          <router-link to="/news/weather" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-sun" />
             <span>Weather</span>
           </router-link>
-          <router-link to="/technology" class="nav-link" @click="isMobileMenuOpen = false">
+          <router-link to="/news/technology" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-microchip" />
             <span>Technology</span>
           </router-link>
-          <router-link to="/finance" class="nav-link" @click="isMobileMenuOpen = false">
+          <router-link to="/news/finance" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-chart-line" />
             <span>Finance</span>
           </router-link>
