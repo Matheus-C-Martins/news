@@ -12,18 +12,21 @@
         <h2>Language</h2>
       </div>
       <div class="settings-content">
-        <p class="setting-description">Choose your preferred language for the application</p>
+        <p class="setting-description">Choose your preferred language for the application and news sources</p>
         <div class="language-grid">
           <button
             v-for="lang in languages"
             :key="lang.code"
-            @click="setLanguage(lang.code)"
+            @click="changeLanguage(lang.code)"
             :class="['language-btn', { active: currentLanguage === lang.code }]"
           >
             <span class="lang-flag">{{ lang.flag }}</span>
             <span class="lang-name">{{ lang.name }}</span>
           </button>
         </div>
+        <p class="language-info" v-if="currentLanguage">
+          📰 Showing {{ availableSources.length }} news sources available in {{ LANGUAGES[currentLanguage].name }}
+        </p>
       </div>
     </section>
 
@@ -61,7 +64,7 @@
         <h2>News Sources</h2>
       </div>
       <div class="settings-content">
-        <p class="setting-description">Select which news sources you want to receive articles from</p>
+        <p class="setting-description">Select which news sources you want to receive articles from (available in {{ LANGUAGES[currentLanguage].name }})</p>
         <div class="source-controls">
           <div class="control-group">
             <label for="source-search" class="search-label">Search sources</label>
@@ -137,59 +140,33 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import {
+  LANGUAGES,
+  SOURCE_BY_LANGUAGE,
+  getCurrentLanguage,
+  getSelectedSourcesForLanguage,
+  saveSelectedSourcesForLanguage,
+  setLanguage
+} from '../services/languages'
 
 const isDark = ref(false)
 const currentLanguage = ref('en')
 const sourceSearchQuery = ref('')
 const selectedSources = ref([])
 
-const languages = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'pt', name: 'Português', flag: '🇵🇹' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-]
+const languages = Object.values(LANGUAGES)
 
-const availableSources = [
-  // Tech Sources
-  { id: 'techcrunch', name: 'TechCrunch', category: 'Technology', country: 'USA', description: 'Breaking tech news and in-depth analysis' },
-  { id: 'wired', name: 'Wired', category: 'Technology', country: 'USA', description: 'Technology, business, and culture' },
-  { id: 'the-verge', name: 'The Verge', category: 'Technology', country: 'USA', description: 'Technology, science, and culture' },
-  { id: 'hacker-news', name: 'Hacker News', category: 'Technology', country: 'USA', description: 'Community driven tech news' },
-  
-  // Business Sources
-  { id: 'cnbc', name: 'CNBC', category: 'Business', country: 'USA', description: 'Business news and financial markets' },
-  { id: 'bloomberg', name: 'Bloomberg', category: 'Business', country: 'USA', description: 'Global business and financial news' },
-  { id: 'financial-times', name: 'Financial Times', category: 'Business', country: 'UK', description: 'International business and finance' },
-  { id: 'reuters', name: 'Reuters', category: 'Business', country: 'UK', description: 'Global news and information' },
-  
-  // Sports Sources
-  { id: 'espn', name: 'ESPN', category: 'Sports', country: 'USA', description: 'Sports news and analysis' },
-  { id: 'sports-illustrated', name: 'Sports Illustrated', category: 'Sports', country: 'USA', description: 'Sports news and features' },
-  { id: 'bbc-sport', name: 'BBC Sport', category: 'Sports', country: 'UK', description: 'International sports coverage' },
-  
-  // Entertainment Sources
-  { id: 'entertainment-weekly', name: 'Entertainment Weekly', category: 'Entertainment', country: 'USA', description: 'Entertainment and celebrity news' },
-  { id: 'variety', name: 'Variety', category: 'Entertainment', country: 'USA', description: 'Entertainment industry news' },
-  { id: 'bbc-entertainment', name: 'BBC Entertainment', category: 'Entertainment', country: 'UK', description: 'Entertainment and media' },
-  
-  // General Sources
-  { id: 'bbc-news', name: 'BBC News', category: 'General', country: 'UK', description: 'World news and current events' },
-  { id: 'cnn', name: 'CNN', category: 'General', country: 'USA', description: 'Breaking news and world coverage' },
-  { id: 'the-new-york-times', name: 'The New York Times', category: 'General', country: 'USA', description: 'News, politics, and analysis' },
-  { id: 'the-guardian', name: 'The Guardian', category: 'General', country: 'UK', description: 'News, opinions, and investigations' },
-  { id: 'associated-press', name: 'Associated Press', category: 'General', country: 'USA', description: 'Breaking news from around the world' },
-]
+const availableSources = computed(() => {
+  return SOURCE_BY_LANGUAGE[currentLanguage.value] || []
+})
 
 const filteredSources = computed(() => {
   if (!sourceSearchQuery.value.trim()) {
-    return availableSources
+    return availableSources.value
   }
   const query = sourceSearchQuery.value.toLowerCase()
-  return availableSources.filter(
+  return availableSources.value.filter(
     source =>
       source.name.toLowerCase().includes(query) ||
       source.category.toLowerCase().includes(query) ||
@@ -207,17 +184,32 @@ onMounted(() => {
   }
 
   // Load language preference
-  const savedLanguage = localStorage.getItem('appLanguage')
-  if (savedLanguage) {
-    currentLanguage.value = savedLanguage
+  currentLanguage.value = getCurrentLanguage()
+
+  // Load selected sources for current language
+  selectedSources.value = getSelectedSourcesForLanguage(currentLanguage.value)
+})
+
+// Watch for language changes
+watch(currentLanguage, (newLanguage) => {
+  // Save sources for previous language
+  const previousLanguage = getCurrentLanguage()
+  if (previousLanguage && previousLanguage !== newLanguage) {
+    saveSelectedSourcesForLanguage(previousLanguage, selectedSources.value)
   }
 
-  // Load selected sources
-  const savedSources = localStorage.getItem('selectedNewsSources')
-  if (savedSources) {
-    selectedSources.value = JSON.parse(savedSources)
-  }
+  // Load sources for new language
+  selectedSources.value = getSelectedSourcesForLanguage(newLanguage)
 })
+
+// Watch for source changes and save them
+watch(
+  selectedSources,
+  (newSources) => {
+    saveSelectedSourcesForLanguage(currentLanguage.value, newSources)
+  },
+  { deep: true }
+)
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value
@@ -230,36 +222,14 @@ const toggleDarkMode = () => {
   }
 }
 
-const setLanguage = (code) => {
+const changeLanguage = (code) => {
   currentLanguage.value = code
-  localStorage.setItem('appLanguage', code)
-  // TODO: Implement actual language switching logic
+  setLanguage(code)
 }
 
 const clearAllSources = () => {
   selectedSources.value = []
-  localStorage.setItem('selectedNewsSources', JSON.stringify([]))
-}
-</script>
-
-<script>
-// Watch for changes and save to localStorage
-import { watch } from 'vue'
-
-export default {
-  setup() {
-    const selectedSources = ref([])
-    
-    watch(
-      selectedSources,
-      (newSources) => {
-        localStorage.setItem('selectedNewsSources', JSON.stringify(newSources))
-      },
-      { deep: true }
-    )
-    
-    return { selectedSources }
-  }
+  saveSelectedSourcesForLanguage(currentLanguage.value, [])
 }
 </script>
 
@@ -332,6 +302,17 @@ export default {
         margin-bottom: 1.5rem;
         font-size: 0.95rem;
       }
+
+      .language-info {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: rgba(16, 185, 129, 0.1);
+        border-left: 3px solid var(--primary);
+        border-radius: 6px;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        margin-bottom: 0;
+      }
     }
   }
 
@@ -340,6 +321,7 @@ export default {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 1rem;
+    margin-bottom: 1rem;
 
     .language-btn {
       padding: 1rem;
