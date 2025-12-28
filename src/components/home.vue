@@ -85,7 +85,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import NewsCard from './newsCard.vue'
-import { fetchNewsByCategory, searchNews } from '../services/newsService'
+import { fetchTopHeadlines, searchNews } from '../services/newsApi'
 
 const articles = ref([])
 const isLoading = ref(false)
@@ -105,20 +105,26 @@ const loadArticles = async () => {
   try {
     let data
     if (isSearching.value && searchQuery.value.trim()) {
-      data = await searchNews(searchQuery.value, 'relevancy', currentPage.value)
+      data = await searchNews({ 
+        q: searchQuery.value, 
+        sortBy: 'relevancy', 
+        page: currentPage.value,
+        pageSize
+      })
     } else {
-      data = await fetchNewsByCategory('general', currentPage.value)
+      data = await fetchTopHeadlines({ 
+        page: currentPage.value,
+        pageSize
+      })
     }
     
-    if (data.status === 'error') {
-      error.value = data.message || 'Failed to fetch articles. Make sure your API key is configured.'
-      articles.value = []
-    } else if (data.articles) {
+    if (data.articles) {
       articles.value = data.articles
-      totalResults.value = Math.min(data.totalResults, 100)
+      totalResults.value = Math.min(data.totalResults || 0, 100)
     }
   } catch (err) {
-    error.value = 'An unexpected error occurred. Please try again.'
+    console.error('Error loading articles:', err)
+    error.value = err.message || 'Failed to fetch articles. Make sure your API key is configured.'
     articles.value = []
   } finally {
     isLoading.value = false
