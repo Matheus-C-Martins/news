@@ -133,7 +133,7 @@ const closeMobileMenu = () => {
   z-index: 100;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  color: white;
+  color: var(--navbar-text);
 
   html.dark-mode & {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
@@ -143,11 +143,32 @@ const closeMobileMenu = () => {
 :root {
   --navbar-bg-start: 31, 41, 55;
   --navbar-bg-end: 51, 65, 85;
+  --navbar-text: white;
+  --navbar-text-secondary: rgba(255, 255, 255, 0.8);
 }
 
 html.dark-mode {
   --navbar-bg-start: 15, 23, 42;
   --navbar-bg-end: 30, 41, 59;
+  --navbar-text: white;
+  --navbar-text-secondary: rgba(255, 255, 255, 0.8);
+}
+
+/* Light mode specific overrides */
+@media (prefers-color-scheme: light) {
+  html:not(.dark-mode) {
+    --navbar-bg-start: 59, 130, 246;
+    --navbar-bg-end: 37, 99, 235;
+    --navbar-text: white;
+    --navbar-text-secondary: rgba(255, 255, 255, 0.9);
+  }
+}
+
+[data-color-scheme="light"] {
+  --navbar-bg-start: 59, 130, 246;
+  --navbar-bg-end: 37, 99, 235;
+  --navbar-text: white;
+  --navbar-text-secondary: rgba(255, 255, 255, 0.9);
 }
 
 .navbar__container {
@@ -167,7 +188,7 @@ html.dark-mode {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: white;
+  color: var(--navbar-text);
   font-weight: 700;
   font-size: 1.5rem;
   text-decoration: none;
@@ -234,7 +255,7 @@ html.dark-mode {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--navbar-text-secondary);
   text-decoration: none;
   border-radius: 8px;
   transition: all 0.2s ease;
@@ -244,8 +265,8 @@ html.dark-mode {
   white-space: nowrap;
 
   &:hover {
-    color: white;
-    background: rgba(16, 185, 129, 0.15);
+    color: var(--navbar-text);
+    background: rgba(255, 255, 255, 0.15);
     padding-left: 1.2rem;
   }
 
@@ -287,7 +308,7 @@ html.dark-mode {
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.1);
-  color: white;
+  color: var(--navbar-text);
   border: 2px solid transparent;
   border-radius: 8px;
   width: 44px;
@@ -298,7 +319,7 @@ html.dark-mode {
   text-decoration: none;
 
   &:hover {
-    background: rgba(16, 185, 129, 0.25);
+    background: rgba(255, 255, 255, 0.2);
     color: var(--primary);
     border-color: var(--primary);
     transform: translateY(-2px);
@@ -329,7 +350,7 @@ html.dark-mode {
     span {
       width: 24px;
       height: 2px;
-      background: white;
+      background: var(--navbar-text);
       margin: 4px 0;
       border-radius: 2px;
       transition: all 0.3s ease;
