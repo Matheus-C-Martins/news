@@ -35,6 +35,9 @@ jobs:
         env:
           VUE_APP_NEWS_API_KEY: ${{ secrets.VUE_APP_NEWS_API_KEY }}
       
+      - name: Create 404.html for routing
+        run: cp dist/index.html dist/404.html
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
