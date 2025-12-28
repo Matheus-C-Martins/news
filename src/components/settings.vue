@@ -62,73 +62,6 @@
       </div>
     </section>
 
-    <!-- News Sources Settings - Hidden for now -->
-    <!-- 
-    <section class="settings-section">
-      <div class="section-header">
-        <fa icon="fa-solid fa-newspaper" class="section-icon" />
-        <h2>News Sources</h2>
-      </div>
-      <div class="settings-content">
-        <p class="setting-description">Select which news sources you want to receive articles from (available in {{ LANGUAGES[currentLanguage].name }})</p>
-        <div class="source-controls">
-          <div class="control-group">
-            <label for="source-search" class="search-label">Search sources</label>
-            <div class="search-wrapper">
-              <fa icon="fa-solid fa-search" class="search-icon" />
-              <input
-                id="source-search"
-                v-model="sourceSearchQuery"
-                type="text"
-                placeholder="Search news sources..."
-                class="source-search"
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- Sources Grid -->
-        <div class="sources-grid">
-          <div v-if="filteredSources.length === 0" class="no-sources">
-            <fa icon="fa-solid fa-inbox" />
-            <p>No sources found matching your search</p>
-          </div>
-          <div
-            v-for="source in filteredSources"
-            :key="source.id"
-            class="source-card"
-          >
-            <div class="source-header">
-              <label :for="`source-${source.id}`" class="source-title">
-                {{ source.name }}
-              </label>
-              <input
-                :id="`source-${source.id}`"
-                v-model="selectedSources"
-                type="checkbox"
-                :value="source.id"
-                class="source-checkbox"
-              />
-            </div>
-            <p class="source-description">{{ source.description }}</p>
-            <div class="source-meta">
-              <span class="country-badge">{{ source.country }}</span>
-              <span class="category-badge">{{ source.category }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Selected Count -->
-        <div class="sources-summary">
-          <p>{{ selectedSources.length }} source{{ selectedSources.length !== 1 ? 's' : '' }} selected</p>
-          <button @click="clearAllSources" class="btn-clear-all" v-if="selectedSources.length > 0">
-            Clear All
-          </button>
-        </div>
-      </div>
-    </section>
-    -->
-
     <!-- About Section -->
     <section class="settings-section">
       <div class="section-header">
@@ -228,15 +161,6 @@ const toggleDarkMode = () => {
     html.classList.remove('dark-mode')
   }
 }
-
-// NOTE: changeLanguage function is currently disabled as the language selection feature is coming soon
-// This function will be re-enabled when language switching is available
-// const changeLanguage = (code) => {
-//   currentLanguage.value = code
-//   setLanguage(code)
-//   // Dispatch custom event for language change
-//   window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: code } }))
-// }
 
 const clearAllSources = () => {
   selectedSources.value = []
