@@ -52,14 +52,8 @@ function applyDarkMode(isDark) {
 function changeLanguage(lang) {
   currentLanguage.value = lang
   setLanguage(lang)
-}
-
-/**
- * Toggle dark mode
- */
-function toggleDarkMode() {
-  isDarkMode.value = !isDarkMode.value
-  applyDarkMode(isDarkMode.value)
+  // Force re-render of views by triggering language change
+  window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }))
 }
 
 /**
@@ -99,7 +93,6 @@ export function useSettings() {
   return {
     isDarkMode,
     currentLanguage,
-    toggleDarkMode,
     changeLanguage,
     initializeSettings
   }
