@@ -287,10 +287,18 @@ const applyDarkMode = (isDark) => {
       background: var(--bg-secondary);
       color: var(--text-primary);
       border: 1px solid var(--border-color-alt);
+      transition: all 0.2s ease;
 
-      &:hover {
+      &:hover:not(:disabled) {
         background: var(--bg-tertiary);
         border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-1px);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
       }
     }
 
