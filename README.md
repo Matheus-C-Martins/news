@@ -1,27 +1,27 @@
-# 📰 News Website - Vue 3 App
+# 📰 News Aggregator App
 
-A modern, responsive news aggregation web application built with Vue 3, powered by the NewsAPI. Browse news articles by category, search, and stay updated with the latest headlines.
+A modern, responsive Vue 3 news aggregator application powered by the **NewsAPI**. Browse news by categories, search for specific topics, and enjoy a beautiful dark mode experience.
 
 ## ✨ Features
 
-- **📁 Category-Based News**: Browse news by categories (General, Sports, Technology, Entertainment, Science)
-- **🔍 Search Functionality**: Search for any topic and filter articles by relevance
-- **📄 Article Cards**: Beautiful card layout with images, descriptions, author info, and publish dates
-- **⏱️ Time-Relative Dates**: See how long ago articles were published (e.g., "2h ago", "1d ago")
-- **📱 Responsive Design**: Fully responsive on desktop, tablet, and mobile devices
-- **🔄 Pagination**: Navigate through multiple pages of articles
-- **⚙️ Error Handling**: Graceful error messages and retry functionality
-- **🎨 Modern UI**: Clean, professional design with smooth animations
-- **⌛ Loading States**: Visual feedback while articles are loading
-- **🎯 Sidebar Navigation**: Collapsible sidebar with smooth transitions
+- 🌍 **Multiple Categories**: Browse news from General, Entertainment, Sports, Technology, Science, and Finance
+- 🔍 **Advanced Search**: Search news articles by keywords with relevancy sorting
+- 🌙 **Dark Mode**: Toggle between light and dark themes with persistent storage
+- 📱 **Responsive Design**: Optimized for desktop, tablet, and mobile devices
+- ⚡ **Real-time Data**: Fetches latest news from NewsAPI with pagination support
+- 🔐 **Secure API Key**: Uses environment variables to protect your API key
+- 🎨 **Modern UI**: Beautiful card-based layout with smooth animations
+- ⏱️ **Relative Timestamps**: Shows how long ago articles were published
+- 🖼️ **Image Fallbacks**: Graceful handling of missing article images
+- ⌨️ **Keyboard Support**: Enter key to search, smooth scrolling on pagination
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
 - Node.js (v14 or higher)
 - npm or yarn
-- Free API key from [NewsAPI.org](https://newsapi.org/)
+- A free API key from [NewsAPI.org](https://newsapi.org/)
 
 ### Installation
 
@@ -36,15 +36,19 @@ A modern, responsive news aggregation web application built with Vue 3, powered 
    npm install
    ```
 
-3. **Set up your API Key**
-   - Get your free API key from [https://newsapi.org/](https://newsapi.org/)
-   - Open `src/services/newsService.js`
-   - Replace `'YOUR_API_KEY_HERE'` with your actual API key:
-   ```javascript
-   const API_KEY = 'your_actual_api_key_here'
+3. **Set up your API key**
+   ```bash
+   cp .env.example .env.local
    ```
+   
+   Edit `.env.local` and add your NewsAPI key:
+   ```
+   VUE_APP_NEWS_API_KEY=your_api_key_here
+   ```
+   
+   Get your free API key at: [https://newsapi.org/register](https://newsapi.org/register)
 
-4. **Run the development server**
+4. **Start the development server**
    ```bash
    npm run serve
    ```
@@ -56,147 +60,172 @@ A modern, responsive news aggregation web application built with Vue 3, powered 
 ```
 src/
 ├── components/
-│   ├── sidebar.vue              # Navigation sidebar
-│   ├── home.vue                 # General news feed with search
-│   ├── sports.vue               # Sports news
-│   ├── technology.vue           # Technology news
-│   ├── shows.vue                # Entertainment news
-│   ├── weather.vue              # Science & Weather news
-│   ├── settings.vue             # Settings page (placeholder)
-│   └── newsCard.vue             # Reusable news article card
+│   ├── sidebar.vue           # Navigation sidebar with dark mode toggle
+│   ├── home.vue              # General news & search page
+│   ├── shows.vue             # Entertainment news
+│   ├── sports.vue            # Sports news
+│   ├── weather.vue           # Science & weather news
+│   ├── technology.vue        # Technology news
+│   ├── finance.vue           # Finance & business news
+│   ├── newsCard.vue          # Individual article card component
+│   └── settings.vue          # Settings page
 ├── services/
-│   └── newsService.js           # API integration & data fetching
-├── assets/                       # Images and static files
-├── App.vue                       # Root component
-├── router.js                     # Route configuration
-└── main.js                       # Application entry point
+│   └── newsService.js        # NewsAPI integration & utility functions
+├── assets/
+│   └── logo.png              # Application logo
+├── router.js                 # Vue Router configuration
+├── App.vue                   # Main app component
+└── main.js                   # Application entry point
 ```
 
-## 📖 Available Scripts
+## 🎨 Design System
 
-### `npm run serve`
-Runs the app in development mode with hot reload.
+### Color Palette
 
-### `npm run build`
-Builds the app for production to the `dist` folder.
+**Light Mode**
+- Primary: `#4ade80` (Green)
+- Primary Alt: `#22c55e`
+- Dark: `#1e293b`
+- Light: `#f1f5f9`
+- Text Primary: `#1e293b`
+- Text Secondary: `#64748b`
+- Background: `#ffffff`
 
-### `npm run lint`
-Runs ESLint to check code quality.
+**Dark Mode**
+- Background Primary: `#0f172a`
+- Background Secondary: `#1e293b`
+- Text Primary: `#f1f5f9`
+- Text Secondary: `#cbd5e1`
+- Primary: `#4ade80` (Same green)
 
-## 🔗 API Reference
+## 🔧 Available Scripts
 
-This app uses the [NewsAPI](https://newsapi.org/) to fetch news articles.
-
-### Main Functions in `newsService.js`
-
-#### `fetchNewsByCategory(category, page)`
-Fetch news articles by category.
-
-**Parameters:**
-- `category` (string): 'general', 'business', 'sports', 'technology', 'entertainment', 'health', 'science'
-- `page` (number): Page number for pagination (default: 1)
-
-**Returns:** Promise with articles array and metadata
-
-```javascript
-const data = await fetchNewsByCategory('technology', 1)
-console.log(data.articles) // Array of articles
+### Development
+```bash
+npm run serve    # Start development server with hot reload
 ```
 
-#### `searchNews(query, sortBy, page)`
-Search for news articles by keyword.
-
-**Parameters:**
-- `query` (string): Search keyword
-- `sortBy` (string): 'relevancy' | 'popularity' | 'publishedAt' (default: 'relevancy')
-- `page` (number): Page number for pagination
-
-**Returns:** Promise with search results
-
-```javascript
-const results = await searchNews('artificial intelligence', 'relevancy', 1)
+### Production
+```bash
+npm run build    # Build for production
+npm run lint     # Run ESLint
 ```
 
-## 🎨 Customization
+## 📖 API Integration
 
-### Colors
-Edit the CSS variables in `src/App.vue` to customize the app theme:
+This app uses the **NewsAPI.org** free tier:
+- 100 requests per day
+- Access to top headlines and everything endpoints
+- Category-based filtering
+- Sorting options (relevancy, popularity, publishedAt)
 
-```scss
-:root {
-  --primary: #4ade80;              // Main green color
-  --primary-alt: #22c55e;          // Darker green
-  --grey: #64748b;                 // Text gray
-  --dark: #1e293b;                 // Dark background
-  --dark-alt: #334155;             // Darker background
-  --light: #f1f5f9;                // Light background
-  --sidebar-width: 300px;          // Sidebar width when expanded
-}
+### Available News Categories
+- `general` - General news
+- `entertainment` - Entertainment news (Shows)
+- `sports` - Sports news
+- `technology` - Technology news
+- `science` - Science news (Weather)
+- `business` - Business & Finance news
+- `health` - Health news
+
+See [NewsAPI Documentation](https://newsapi.org/docs) for more details.
+
+## 🔐 Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```env
+VUE_APP_NEWS_API_KEY=your_api_key_here
 ```
 
-### Adding New Categories
+**Important Security Notes:**
+- `.env.local` is automatically ignored by `.gitignore`
+- Never commit your API key to version control
+- Use `.env.example` as a template for team members
 
-1. Create a new `.vue` file in `src/components/`
-2. Add the route to `src/router.js`
-3. Update `CATEGORY_MAP` in `src/services/newsService.js` to map to a NewsAPI category
-4. Add a navigation link in `sidebar.vue`
+## 🎯 Features Explained
 
-## 📱 Responsive Breakpoints
+### Dark Mode
+- Toggle using the sidebar button (moon/sun icon)
+- Respects system preferences on first visit
+- Preference persists in localStorage
+- Smooth CSS transitions between modes
+- Custom scrollbar styling in dark mode
 
-- **Desktop**: Full layout with sidebar and content
-- **Tablet (≤1024px)**: Sidebar becomes absolute positioned, adjusts padding
-- **Mobile (≤640px)**: Single column grid, optimized touch targets
+### Search
+- Search by keywords across all news sources
+- Results sorted by relevancy (can be customized)
+- Clear button to quickly reset search
+- Pagination support for large result sets
+- Real-time search hints
 
-## 🔒 Security Notes
+### Categories
+- One-click navigation to category-specific news
+- Paginated results (20 articles per page)
+- Consistent UI and behavior across all categories
+- Individual component for each category
 
-⚠️ **Important**: Never commit your API key to version control!
+### Error Handling
+- Graceful error messages for API issues
+- Clear API key configuration errors
+- Retry functionality on failure
+- Image loading fallbacks with placeholders
+- Network error detection
 
-For production deployment, consider:
-- Using environment variables (`.env` file)
-- Setting up a backend proxy to hide the API key
-- Implementing rate limiting
+## 📱 Responsive Design
+
+**Breakpoints:**
+- **Desktop** (1024px+): Full layout with expanded sidebar
+- **Tablet** (640px - 1024px): Collapsed sidebar, adjusted grid
+- **Mobile** (<640px): Single-column layout, optimized touch targets
+
+All components automatically adapt to screen size.
 
 ## 🐛 Troubleshooting
 
-### "Failed to fetch articles. Make sure your API key is set correctly."
-- Verify your API key is correct in `src/services/newsService.js`
-- Check that you have an active internet connection
-- Ensure you haven't exceeded your daily API quota (free tier: 100 requests/day)
+### "API key not configured" Error
+**Solution**: 
+1. Make sure `.env.local` exists in your project root
+2. Verify it contains: `VUE_APP_NEWS_API_KEY=your_actual_key`
+3. Restart the development server:
+   ```bash
+   npm run serve
+   ```
 
-### Articles not loading
-- Check browser console for errors
-- Verify the category name is correct
-- Try a different category or search term
-- Check if the API is operational
+### No articles loading
+**Possible causes and solutions**:
+1. **Invalid API key**: Verify at [NewsAPI Dashboard](https://newsapi.org/account)
+2. **API quota reached**: Free tier = 100 requests/day. Check your usage.
+3. **No internet**: Check your connection
+4. **NewsAPI down**: Check [NewsAPI status](https://newsapi.org/)
 
-### Sidebar not working on mobile
-- Clear browser cache and reload
-- Check that localStorage is enabled
-- Try in a different browser
+### Images not loading
+This is normal behavior - some articles don't have associated images. The app displays a placeholder icon instead.
 
-## 📊 API Limits
-
-**Free Tier:**
-- 100 requests per day
-- Limited to top headlines (last 24-30 days)
-- Rate limit: 1 request per second
-
-**Paid Tiers:** Check [NewsAPI pricing](https://newsapi.org/pricing)
+### Dark mode not persisting
+- Ensure localStorage is enabled in your browser
+- Check if you're in private/incognito mode
+- Clear cookies and try again
 
 ## 🚀 Deployment
 
-### Deploy to Vercel (Recommended)
-1. Push your code to GitHub
-2. Connect your repository to [Vercel](https://vercel.com)
-3. Set the `NEWS_API_KEY` environment variable in Vercel settings
-4. Update your component to use the environment variable
+### Netlify
+1. Push code to GitHub
+2. Connect repository to [Netlify](https://netlify.com)
+3. Set environment variable in Netlify settings:
+   - Key: `VUE_APP_NEWS_API_KEY`
+   - Value: Your API key
+4. Deploy!
 
-### Deploy to Netlify
-1. Run `npm run build`
-2. Drag the `dist` folder to [Netlify](https://netlify.com)
-3. Set environment variables in Netlify settings
+### Vercel
+1. Push code to GitHub
+2. Import project in [Vercel](https://vercel.com)
+3. Add environment variable:
+   - Name: `VUE_APP_NEWS_API_KEY`
+   - Value: Your API key
+4. Deploy!
 
-### Deploy with Docker
+### Docker
 ```dockerfile
 FROM node:16-alpine
 WORKDIR /app
@@ -204,40 +233,66 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
+
 FROM node:16-alpine
 WORKDIR /app
 RUN npm install -g serve
 COPY --from=0 /app/dist ./dist
-CMD ["serve", "-s", "dist"]
+EXPOSE 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]
 ```
 
-## 📚 Technologies Used
+## 💻 Technologies Used
 
-- **Vue 3**: Progressive JavaScript framework
-- **Vue Router 4**: Client-side routing
-- **Sass**: CSS preprocessing
-- **Font Awesome 6**: Icon library
-- **NewsAPI**: News data source
+- **Vue 3** - Progressive JavaScript framework
+- **Vue Router 4** - Client-side routing
+- **SCSS** - Styling with CSS variables
+- **Font Awesome 6** - Icon library
+- **NewsAPI** - News data provider
+- **Fetch API** - HTTP requests
 
-## 📝 Future Enhancements
+## 🛠️ Service Functions
 
-- [ ] Dark/Light theme toggle
-- [ ] Bookmark/Save articles
-- [ ] Share to social media
-- [ ] Article reading time estimate
-- [ ] Filter by date range
-- [ ] Language selection
-- [ ] Offline support with PWA
-- [ ] Comments and discussions
-- [ ] User accounts and preferences
+### `newsService.js` API
+
+#### `fetchNewsByCategory(category, page)`
+```javascript
+const data = await fetchNewsByCategory('technology', 1)
+// Returns: { articles: [...], totalResults: 123, status: 'ok' }
+```
+
+#### `searchNews(query, sortBy, page)`
+```javascript
+const results = await searchNews('AI', 'relevancy', 1)
+// Returns: { articles: [...], totalResults: 5000, status: 'ok' }
+```
+
+#### `fetchTopHeadlines(country, page)`
+```javascript
+const headlines = await fetchTopHeadlines('us', 1)
+// Returns: { articles: [...], totalResults: 38, status: 'ok' }
+```
+
+## 📚 Learning Resources
+
+- [Vue 3 Documentation](https://vuejs.org/)
+- [Vue Router Documentation](https://router.vuejs.org/)
+- [NewsAPI Documentation](https://newsapi.org/docs)
+- [FontAwesome Icons](https://fontawesome.com/icons)
+- [SCSS Documentation](https://sass-lang.com/)
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is open source and available under the MIT License.
 
 ## 🙏 Acknowledgments
 
@@ -245,13 +300,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Vue.js](https://vuejs.org/) team for the amazing framework
 - [Font Awesome](https://fontawesome.com/) for the icons
 
-## 📞 Support
-
-Having issues? 
-- Check the [Troubleshooting](#-troubleshooting) section
-- Review the [API Reference](#-api-reference)
-- Open an [issue](https://github.com/Matheus-C-Martins/news/issues) on GitHub
-
 ---
 
-**Made with ❤️ by [Matheus Martins](https://github.com/Matheus-C-Martins)**
+**Made with ❤️ by [Matheus Martins](https://github.com/Matheus-C-Martins)**  
+Happy reading! 📰 ✨
