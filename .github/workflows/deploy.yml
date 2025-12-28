@@ -34,6 +34,7 @@ jobs:
         run: npm run build
         env:
           VUE_APP_NEWS_API_KEY: ${{ secrets.VUE_APP_NEWS_API_KEY }}
+          VUE_APP_VERCEL_API_URL: ${{ secrets.VUE_APP_VERCEL_API_URL }}
       
       - name: Create 404.html for routing
         run: cp dist/index.html dist/404.html
