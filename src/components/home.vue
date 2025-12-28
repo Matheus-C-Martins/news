@@ -2,7 +2,7 @@
   <main id="home-page" class="news-container">
     <div class="header">
       <h1>All News</h1>
-      <p class="subtitle">Stay updated with the latest headlines</p>
+      <p class="subtitle">Stay updated with the latest headlines from around the world</p>
     </div>
     
     <!-- Search Bar -->
@@ -12,17 +12,21 @@
         <input 
           v-model="searchQuery"
           type="text"
-          placeholder="Search news..."
+          placeholder="Search news by keywords..."
           class="search-input"
           @keyup.enter="performSearch"
         />
+        <button v-if="searchQuery" @click="clearSearch" class="clear-button" title="Clear search">
+          <fa icon="fa-solid fa-times" />
+        </button>
       </div>
+      <p v-if="isSearching" class="search-hint">Searching for: <strong>{{ searchQuery }}</strong></p>
     </div>
     
     <!-- Loading State -->
     <div v-if="isLoading" class="loading-state">
       <div class="spinner"></div>
-      <p>Loading articles...</p>
+      <p>{{ isSearching ? 'Searching articles...' : 'Loading articles...' }}</p>
     </div>
     
     <!-- Error State -->
@@ -30,7 +34,7 @@
       <fa icon="fa-solid fa-exclamation-triangle" class="error-icon" />
       <h3>Oops! Something went wrong</h3>
       <p>{{ error }}</p>
-      <p v-if="error.includes('API_KEY')">Please set your NewsAPI key in <code>src/services/newsService.js</code></p>
+      <p v-if="error.includes('configured')" class="error-hint">📝 Create a <code>.env.local</code> file with your API key</p>
       <button @click="retryFetch" class="retry-button">
         <fa icon="fa-solid fa-refresh" /> Try Again
       </button>
@@ -40,7 +44,8 @@
     <div v-else-if="articles.length === 0" class="no-results">
       <fa icon="fa-solid fa-inbox" class="no-results-icon" />
       <h3>No articles found</h3>
-      <p>Try a different search or check back later</p>
+      <p v-if="isSearching">Try a different search term</p>
+      <p v-else>Check back later for more news</p>
     </div>
     
     <!-- Articles Grid -->
@@ -106,11 +111,11 @@ const loadArticles = async () => {
     }
     
     if (data.status === 'error') {
-      error.value = data.message || 'Failed to fetch articles. Make sure your API key is set correctly.'
+      error.value = data.message || 'Failed to fetch articles. Make sure your API key is configured.'
       articles.value = []
     } else if (data.articles) {
       articles.value = data.articles
-      totalResults.value = Math.min(data.totalResults, 100) // API limits to 100 results
+      totalResults.value = Math.min(data.totalResults, 100)
     }
   } catch (err) {
     error.value = 'An unexpected error occurred. Please try again.'
@@ -170,13 +175,13 @@ onMounted(() => {
     
     h1 {
       font-size: 2.5rem;
-      color: var(--dark);
+      color: var(--text-primary);
       margin-bottom: 0.5rem;
     }
     
     .subtitle {
       font-size: 1.1rem;
-      color: var(--grey);
+      color: var(--text-secondary);
     }
   }
   
@@ -191,17 +196,18 @@ onMounted(() => {
       .search-icon {
         position: absolute;
         left: 16px;
-        color: var(--grey);
+        color: var(--text-secondary);
         pointer-events: none;
       }
       
       .search-input {
         width: 100%;
-        padding: 12px 16px 12px 40px;
+        padding: 12px 40px 12px 40px;
         font-size: 1rem;
-        border: 2px solid var(--light);
+        border: 2px solid var(--border-color);
         border-radius: 8px;
-        background: white;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
         transition: all 0.3s ease;
         
         &:focus {
@@ -211,8 +217,34 @@ onMounted(() => {
         }
         
         &::placeholder {
-          color: var(--grey);
+          color: var(--text-secondary);
         }
+      }
+      
+      .clear-button {
+        position: absolute;
+        right: 12px;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: color 0.2s ease;
+        padding: 4px 8px;
+        
+        &:hover {
+          color: var(--primary);
+        }
+      }
+    }
+    
+    .search-hint {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      
+      strong {
+        color: var(--primary);
       }
     }
   }
@@ -226,21 +258,23 @@ onMounted(() => {
     justify-content: center;
     padding: 4rem 2rem;
     text-align: center;
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
     
     p {
-      color: var(--grey);
+      color: var(--text-secondary);
       margin: 0.5rem 0 0 0;
     }
     
     code {
-      background: var(--dark-alt);
-      color: var(--light);
+      background: var(--bg-primary);
+      color: var(--text-primary);
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 0.9em;
+      border: 1px solid var(--border-color);
     }
   }
   
@@ -248,7 +282,7 @@ onMounted(() => {
     .spinner {
       width: 40px;
       height: 40px;
-      border: 4px solid var(--light);
+      border: 4px solid var(--border-color);
       border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 1s linear infinite;
@@ -262,13 +296,18 @@ onMounted(() => {
     
     .error-icon {
       font-size: 3rem;
-      color: var(--dark);
+      color: var(--text-primary);
       margin-bottom: 1rem;
     }
     
     h3 {
-      color: var(--dark);
+      color: var(--text-primary);
       margin: 0;
+    }
+    
+    .error-hint {
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
     }
     
     .retry-button {
@@ -293,17 +332,17 @@ onMounted(() => {
   }
   
   .no-results {
-    background: linear-gradient(135deg, var(--light), white);
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
     
     .no-results-icon {
       font-size: 4rem;
-      color: var(--grey);
+      color: var(--text-secondary);
       margin-bottom: 1rem;
       opacity: 0.5;
     }
     
     h3 {
-      color: var(--dark);
+      color: var(--text-primary);
       margin: 0 0 0.5rem 0;
     }
   }
@@ -321,9 +360,10 @@ onMounted(() => {
     justify-content: center;
     gap: 2rem;
     padding: 2rem;
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
     
     .pagination-button {
       display: inline-flex;
@@ -345,10 +385,11 @@ onMounted(() => {
       }
       
       &:disabled {
-        background: var(--light);
-        color: var(--grey);
+        background: var(--bg-primary);
+        color: var(--text-secondary);
         cursor: not-allowed;
         opacity: 0.5;
+        border: 1px solid var(--border-color);
       }
       
       fa {
@@ -357,7 +398,7 @@ onMounted(() => {
     }
     
     .page-info {
-      color: var(--dark);
+      color: var(--text-primary);
       font-weight: 600;
       
       .current-page,
