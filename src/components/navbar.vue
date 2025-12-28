@@ -10,9 +10,9 @@
       <!-- Desktop Navigation Menu -->
       <ul class="navbar__menu navbar__menu--desktop">
         <li>
-          <router-link to="/news/entertainment" class="navbar__link" @click="closeMobileMenu">
+          <router-link to="/news/shows" class="navbar__link" @click="closeMobileMenu">
             <fa icon="fa-solid fa-tv" />
-            <span>Entertainment</span>
+            <span>Shows</span>
           </router-link>
         </li>
         <li>
@@ -22,9 +22,9 @@
           </router-link>
         </li>
         <li>
-          <router-link to="/news/science" class="navbar__link" @click="closeMobileMenu">
-            <fa icon="fa-solid fa-flask" />
-            <span>Science</span>
+          <router-link to="/news/weather" class="navbar__link" @click="closeMobileMenu">
+            <fa icon="fa-solid fa-cloud" />
+            <span>Weather</span>
           </router-link>
         </li>
         <li>
@@ -34,9 +34,9 @@
           </router-link>
         </li>
         <li>
-          <router-link to="/news/business" class="navbar__link" @click="closeMobileMenu">
-            <fa icon="fa-solid fa-briefcase" />
-            <span>Business</span>
+          <router-link to="/news/finance" class="navbar__link" @click="closeMobileMenu">
+            <fa icon="fa-solid fa-chart-line" />
+            <span>Finance</span>
           </router-link>
         </li>
       </ul>
@@ -71,9 +71,9 @@
         </router-link>
       </li>
       <li>
-        <router-link to="/news/entertainment" class="navbar__link" @click="closeMobileMenu">
+        <router-link to="/news/shows" class="navbar__link" @click="closeMobileMenu">
           <fa icon="fa-solid fa-tv" />
-          <span>Entertainment</span>
+          <span>Shows</span>
         </router-link>
       </li>
       <li>
@@ -83,9 +83,9 @@
         </router-link>
       </li>
       <li>
-        <router-link to="/news/science" class="navbar__link" @click="closeMobileMenu">
-          <fa icon="fa-solid fa-flask" />
-          <span>Science</span>
+        <router-link to="/news/weather" class="navbar__link" @click="closeMobileMenu">
+          <fa icon="fa-solid fa-cloud" />
+          <span>Weather</span>
         </router-link>
       </li>
       <li>
@@ -95,9 +95,9 @@
         </router-link>
       </li>
       <li>
-        <router-link to="/news/business" class="navbar__link" @click="closeMobileMenu">
-          <fa icon="fa-solid fa-briefcase" />
-          <span>Business</span>
+        <router-link to="/news/finance" class="navbar__link" @click="closeMobileMenu">
+          <fa icon="fa-solid fa-chart-line" />
+          <span>Finance</span>
         </router-link>
       </li>
     </ul>
