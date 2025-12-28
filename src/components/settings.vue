@@ -227,12 +227,14 @@ const toggleDarkMode = () => {
   }
 }
 
-const changeLanguage = (code) => {
-  currentLanguage.value = code
-  setLanguage(code)
-  // Dispatch custom event for language change
-  window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: code } }))
-}
+// NOTE: changeLanguage function is currently disabled as the language selection feature is coming soon
+// This function will be re-enabled when language switching is available
+// const changeLanguage = (code) => {
+//   currentLanguage.value = code
+//   setLanguage(code)
+//   // Dispatch custom event for language change
+//   window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: code } }))
+// }
 
 const clearAllSources = () => {
   selectedSources.value = []
