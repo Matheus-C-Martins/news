@@ -7,46 +7,48 @@ import Technology from './components/technology.vue'
 import Finance from './components/finance.vue'
 import Settings from './components/settings.vue'
 
+const baseURL = '/news'
+
 const routes=[
     {
         name:'Home',
         component: Home,
-        path: '/'
+        path: baseURL
     },
     {
         name:'Weather',
         component: Weather,
-        path: '/weather'
+        path: baseURL+'/weather'
     },
     {
         name:'Sports',
         component: Sports,
-        path: '/sports'
+        path: baseURL+'/sports'
     },
     {
         name:'Technology',
         component: Technology,
-        path: '/technology'
+        path: baseURL+'/technology'
     },
     {
         name:'Shows',
         component: Shows,
-        path: '/shows'
+        path: baseURL+'/shows'
     },
     {
         name:'Finance',
         component: Finance,
-        path: '/finance'
+        path: baseURL+'/finance'
     },
     {
         name:'Settings',
         component: Settings,
-        path: '/settings'
+        path: baseURL+'/settings'
     },
 ]
 
 const router = createRouter({
-    history: createWebHistory('/news/'),
+    history: createWebHistory(),
     routes
 })
 
