@@ -388,6 +388,24 @@ onMounted(() => {
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      color: var(--text-primary);
+    }
+    
+    .btn.btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color-alt);
+      
+      &:hover:not(:disabled) {
+        background: var(--bg-tertiary);
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     }
     
     .page-info {
@@ -407,6 +425,28 @@ onMounted(() => {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
