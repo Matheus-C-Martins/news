@@ -1,55 +1,57 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from './components/home.vue'
-import Shows from './components/shows.vue'
-import Sports from './components/sports.vue'
-import Weather from './components/weather.vue'
-import Technology from './components/technology.vue'
-import Finance from './components/finance.vue'
-import Settings from './components/settings.vue'
 
-const baseURL = '/news'
+// Page Components
+import Home from './pages/Home.vue'
+import Entertainment from './pages/Entertainment.vue'
+import Sports from './pages/Sports.vue'
+import Science from './pages/Science.vue'
+import Technology from './pages/Technology.vue'
+import Business from './pages/Business.vue'
+import Settings from './pages/Settings.vue'
 
-const routes=[
-    {
-        name:'Home',
-        component: Home,
-        path: baseURL
-    },
-    {
-        name:'Science',
-        component: Weather,
-        path: baseURL+'/science'
-    },
-    {
-        name:'Sports',
-        component: Sports,
-        path: baseURL+'/sports'
-    },
-    {
-        name:'Technology',
-        component: Technology,
-        path: baseURL+'/technology'
-    },
-    {
-        name:'Entertainment',
-        component: Shows,
-        path: baseURL+'/entertainment'
-    },
-    {
-        name:'Business',
-        component: Finance,
-        path: baseURL+'/business'
-    },
-    {
-        name:'Settings',
-        component: Settings,
-        path: baseURL+'/settings'
-    },
+const BASE_URL = '/news'
+
+const routes = [
+  {
+    path: BASE_URL,
+    name: 'Home',
+    component: Home
+  },
+  {
+    path: `${BASE_URL}/entertainment`,
+    name: 'Entertainment',
+    component: Entertainment
+  },
+  {
+    path: `${BASE_URL}/sports`,
+    name: 'Sports',
+    component: Sports
+  },
+  {
+    path: `${BASE_URL}/science`,
+    name: 'Science',
+    component: Science
+  },
+  {
+    path: `${BASE_URL}/technology`,
+    name: 'Technology',
+    component: Technology
+  },
+  {
+    path: `${BASE_URL}/business`,
+    name: 'Business',
+    component: Business
+  },
+  {
+    path: `${BASE_URL}/settings`,
+    name: 'Settings',
+    component: Settings
+  }
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes
+  history: createWebHistory(),
+  routes
 })
 
 export default router
