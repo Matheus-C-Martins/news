@@ -151,8 +151,8 @@ import {
   SOURCE_BY_LANGUAGE,
   getCurrentLanguage,
   getSelectedSourcesForLanguage,
-  saveSelectedSourcesForLanguage,
-  setLanguage
+  saveSelectedSourcesForLanguage
+  // setLanguage - Currently disabled as language selection feature is coming soon
 } from '../services/languages'
 
 const isDark = ref(false)
