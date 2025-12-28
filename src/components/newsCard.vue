@@ -2,8 +2,8 @@
   <article class="news-card">
     <div class="card-image-wrapper">
       <img 
-        v-if="article.urlToImage" 
-        :src="article.urlToImage" 
+        v-if="safeImageUrl" 
+        :src="safeImageUrl" 
         :alt="article.title"
         class="card-image"
         @error="handleImageError"
@@ -44,12 +44,33 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, computed } from 'vue'
 
 defineProps({
   article: {
     type: Object,
     required: true
+  }
+})
+
+// SECURITY FIX: Validate and sanitize image URLs to ensure HTTPS protocol
+// This prevents mixed content warnings and potential security issues
+const safeImageUrl = computed(() => {
+  if (!article.value?.urlToImage) return null
+  
+  try {
+    const url = new URL(article.value.urlToImage)
+    // Only allow HTTPS images - reject HTTP to prevent mixed content
+    if (url.protocol === 'https:') {
+      return article.value.urlToImage
+    }
+    // Log warning for HTTP images but don't display them
+    console.warn('Blocked HTTP image URL for security:', article.value.urlToImage)
+    return null
+  } catch (error) {
+    // Invalid URL format
+    console.warn('Invalid image URL:', article.value.urlToImage)
+    return null
   }
 })
 
