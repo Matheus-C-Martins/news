@@ -49,8 +49,9 @@ export async function fetchNewsByCategory(category = 'general', page = 1, langua
   try {
     // Use provided language or get current language from settings
     const lang = language || getCurrentLanguage()
+    const country = getCountryForLanguage(lang)
     
-    const endpoint = `${VERCEL_API_URL}?category=${category}&page=${page}&language=${lang}`
+    const endpoint = `${VERCEL_API_URL}?category=${category}&page=${page}&country=${country}`
     const response = await fetch(endpoint)
     
     if (!response.ok) {
@@ -94,8 +95,9 @@ export async function searchNews(query, sortBy = 'relevancy', page = 1, language
     
     // Use provided language or get current language from settings
     const lang = language || getCurrentLanguage()
+    const country = getCountryForLanguage(lang)
     
-    const endpoint = `${VERCEL_API_URL}?q=${encodeURIComponent(query)}&sortBy=${sortBy}&page=${page}&language=${lang}`
+    const endpoint = `${VERCEL_API_URL}?q=${encodeURIComponent(query)}&sortBy=${sortBy}&page=${page}&country=${country}`
     const response = await fetch(endpoint)
     
     if (!response.ok) {
@@ -115,12 +117,13 @@ export async function searchNews(query, sortBy = 'relevancy', page = 1, language
 }
 
 /**
- * Get top headlines for a specific language
+ * Get top headlines for a specific country
+ * @param {string} country - Country code (us, gb, fr, de, etc.). If not provided, uses country for current language
  * @param {number} page - Page number
  * @param {string} language - Optional language code. If not provided, uses current language from settings
  * @returns {Promise<Object>} - Headlines
  */
-export async function fetchTopHeadlines(page = 1, language = null) {
+export async function fetchTopHeadlines(country = null, page = 1, language = null) {
   if (!VERCEL_API_URL) {
     return {
       articles: [],
@@ -133,8 +136,9 @@ export async function fetchTopHeadlines(page = 1, language = null) {
   try {
     // Use provided language or get current language from settings
     const lang = language || getCurrentLanguage()
+    const countryCode = country || getCountryForLanguage(lang)
     
-    const endpoint = `${VERCEL_API_URL}?language=${lang}&page=${page}`
+    const endpoint = `${VERCEL_API_URL}?country=${countryCode}&page=${page}`
     const response = await fetch(endpoint)
     
     if (!response.ok) {
