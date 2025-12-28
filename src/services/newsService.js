@@ -5,8 +5,9 @@
  * Free tier: 100 requests per day
  */
 
-// ⚠️ IMPORTANT: Replace with your actual API key from https://newsapi.org/
-const API_KEY = 'YOUR_API_KEY_HERE'
+// ⚠️ API Key is loaded from environment variables for security
+// Create a .env.local file with: VUE_APP_NEWS_API_KEY=your_key_here
+const API_KEY = process.env.VUE_APP_NEWS_API_KEY
 const BASE_URL = 'https://newsapi.org/v2'
 
 /**
@@ -16,6 +17,16 @@ const BASE_URL = 'https://newsapi.org/v2'
  * @returns {Promise<Object>} - Articles data or error
  */
 export async function fetchNewsByCategory(category = 'general', page = 1) {
+  // Validate API key
+  if (!API_KEY) {
+    return {
+      articles: [],
+      totalResults: 0,
+      status: 'error',
+      message: 'API key not configured. Please set VUE_APP_NEWS_API_KEY in your .env.local file'
+    }
+  }
+
   try {
     const endpoint = `${BASE_URL}/top-headlines?category=${category}&country=us&page=${page}&apiKey=${API_KEY}`
     const response = await fetch(endpoint)
@@ -44,6 +55,15 @@ export async function fetchNewsByCategory(category = 'general', page = 1) {
  * @returns {Promise<Object>} - Search results
  */
 export async function searchNews(query, sortBy = 'relevancy', page = 1) {
+  if (!API_KEY) {
+    return {
+      articles: [],
+      totalResults: 0,
+      status: 'error',
+      message: 'API key not configured. Please set VUE_APP_NEWS_API_KEY in your .env.local file'
+    }
+  }
+
   try {
     if (!query.trim()) {
       return { articles: [], totalResults: 0, status: 'ok' }
@@ -75,6 +95,15 @@ export async function searchNews(query, sortBy = 'relevancy', page = 1) {
  * @returns {Promise<Object>} - Headlines
  */
 export async function fetchTopHeadlines(country = 'us', page = 1) {
+  if (!API_KEY) {
+    return {
+      articles: [],
+      totalResults: 0,
+      status: 'error',
+      message: 'API key not configured. Please set VUE_APP_NEWS_API_KEY in your .env.local file'
+    }
+  }
+
   try {
     const endpoint = `${BASE_URL}/top-headlines?country=${country}&page=${page}&apiKey=${API_KEY}`
     const response = await fetch(endpoint)
@@ -105,7 +134,8 @@ export const CATEGORY_MAP = {
   'technology': { api: 'technology', label: 'Technology' },
   'weather': { api: 'science', label: 'Science & Weather' },
   'business': { api: 'business', label: 'Business' },
-  'health': { api: 'health', label: 'Health' }
+  'health': { api: 'health', label: 'Health' },
+  'finance': { api: 'business', label: 'Finance' }
 }
 
 export default {
