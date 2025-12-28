@@ -35,7 +35,7 @@
       <h3>Oops! Something went wrong</h3>
       <p>{{ error }}</p>
       <p v-if="error.includes('configured')" class="error-hint">📝 Create a <code>.env.local</code> file with your API key</p>
-      <button @click="retryFetch" class="retry-button">
+      <button @click="retryFetch" class="btn btn-primary">
         <fa icon="fa-solid fa-refresh" /> Try Again
       </button>
     </div>
@@ -62,7 +62,7 @@
       <button 
         @click="previousPage"
         :disabled="currentPage === 1"
-        class="pagination-button"
+        class="btn btn-secondary"
       >
         <fa icon="fa-solid fa-chevron-left" /> Previous
       </button>
@@ -74,7 +74,7 @@
       <button 
         @click="nextPage"
         :disabled="currentPage >= totalPages"
-        class="pagination-button"
+        class="btn btn-secondary"
       >
         Next <fa icon="fa-solid fa-chevron-right" />
       </button>
@@ -171,22 +171,32 @@ onMounted(() => {
   margin: 0 auto;
   
   .header {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    animation: slideInUp 0.5s ease-out;
     
     h1 {
       font-size: 2.5rem;
       color: var(--text-primary);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     
     .subtitle {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0;
     }
   }
   
   .search-section {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    animation: slideInUp 0.5s ease-out 0.1s both;
     
     .search-wrapper {
       position: relative;
@@ -196,24 +206,27 @@ onMounted(() => {
       .search-icon {
         position: absolute;
         left: 16px;
-        color: var(--text-secondary);
+        color: var(--primary);
         pointer-events: none;
+        font-size: 1.1rem;
       }
       
       .search-input {
         width: 100%;
-        padding: 12px 40px 12px 40px;
+        padding: 13px 40px 13px 45px;
         font-size: 1rem;
         border: 2px solid var(--border-color);
-        border-radius: 8px;
+        border-radius: 10px;
         background: var(--bg-secondary);
         color: var(--text-primary);
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 500;
         
         &:focus {
           outline: none;
           border-color: var(--primary);
-          box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+          box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+          background: rgba(16, 185, 129, 0.02);
         }
         
         &::placeholder {
@@ -229,22 +242,27 @@ onMounted(() => {
         color: var(--text-secondary);
         cursor: pointer;
         font-size: 1.2rem;
-        transition: color 0.2s ease;
+        transition: all 0.2s ease;
         padding: 4px 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         
         &:hover {
           color: var(--primary);
+          transform: scale(1.15);
         }
       }
     }
     
     .search-hint {
-      margin-top: 8px;
+      margin-top: 10px;
       font-size: 0.9rem;
       color: var(--text-secondary);
       
       strong {
         color: var(--primary);
+        font-weight: 600;
       }
     }
   }
@@ -256,21 +274,27 @@ onMounted(() => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4rem 2rem;
+    padding: 5rem 2rem;
     text-align: center;
-    background: var(--bg-secondary);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
     border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, calc(var(--glass-opacity) * 0.6));
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    
+    html.dark-mode & {
+      background: rgba(30, 41, 59, calc(var(--glass-opacity) * 1.2));
+    }
     
     p {
       color: var(--text-secondary);
-      margin: 0.5rem 0 0 0;
+      margin: 0.75rem 0 0 0;
     }
     
     code {
       background: var(--bg-primary);
-      color: var(--text-primary);
+      color: var(--primary);
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 0.9em;
@@ -280,8 +304,8 @@ onMounted(() => {
   
   .loading-state {
     .spinner {
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       border: 4px solid var(--border-color);
       border-top-color: var(--primary);
       border-radius: 50%;
@@ -291,67 +315,56 @@ onMounted(() => {
   }
   
   .error-state {
-    background: rgba(192, 21, 47, 0.05);
-    border: 1px solid rgba(192, 21, 47, 0.2);
+    background: rgba(192, 21, 47, 0.06);
+    border: 1px solid rgba(192, 21, 47, 0.15);
+    backdrop-filter: blur(var(--glass-blur));
     
     .error-icon {
-      font-size: 3rem;
+      font-size: 3.5rem;
       color: var(--text-primary);
       margin-bottom: 1rem;
-    }
-    
-    h3 {
-      color: var(--text-primary);
-      margin: 0;
-    }
-    
-    .error-hint {
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-    }
-    
-    .retry-button {
-      margin-top: 1rem;
-      background: var(--dark);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      
-      &:hover {
-        background: var(--dark-alt);
-      }
-    }
-  }
-  
-  .no-results {
-    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
-    
-    .no-results-icon {
-      font-size: 4rem;
-      color: var(--text-secondary);
-      margin-bottom: 1rem;
-      opacity: 0.5;
+      opacity: 0.8;
     }
     
     h3 {
       color: var(--text-primary);
       margin: 0 0 0.5rem 0;
+      font-size: 1.3rem;
+    }
+    
+    .error-hint {
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
+    }
+  }
+  
+  .no-results {
+    background: linear-gradient(
+      135deg,
+      rgba(16, 185, 129, 0.05) 0%,
+      rgba(139, 92, 246, 0.05) 100%
+    );
+    
+    .no-results-icon {
+      font-size: 4.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      opacity: 0.4;
+    }
+    
+    h3 {
+      color: var(--text-primary);
+      margin: 0 0 0.5rem 0;
+      font-size: 1.3rem;
     }
   }
   
   .articles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    animation: fadeIn 0.5s ease-out 0.2s both;
   }
   
   .pagination {
@@ -359,51 +372,33 @@ onMounted(() => {
     align-items: center;
     justify-content: center;
     gap: 2rem;
-    padding: 2rem;
-    background: var(--bg-secondary);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
     border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, calc(var(--glass-opacity) * 0.6));
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     
-    .pagination-button {
+    html.dark-mode & {
+      background: rgba(30, 41, 59, calc(var(--glass-opacity) * 1.2));
+    }
+    
+    .btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      
-      &:hover:not(:disabled) {
-        background: var(--primary-alt);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(74, 222, 128, 0.2);
-      }
-      
-      &:disabled {
-        background: var(--bg-primary);
-        color: var(--text-secondary);
-        cursor: not-allowed;
-        opacity: 0.5;
-        border: 1px solid var(--border-color);
-      }
-      
-      fa {
-        font-size: 0.9rem;
-      }
     }
     
     .page-info {
       color: var(--text-primary);
       font-weight: 600;
+      white-space: nowrap;
       
       .current-page,
       .total-pages {
         color: var(--primary);
+        font-weight: 700;
       }
     }
   }
@@ -418,23 +413,31 @@ onMounted(() => {
 @media (max-width: 1024px) {
   .news-container {
     .header {
+      margin-bottom: 2rem;
+      
       h1 {
         font-size: 2rem;
       }
       
       .subtitle {
-        font-size: 1rem;
+        font-size: 1.05rem;
       }
     }
     
     .articles-grid {
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1.5rem;
     }
     
     .pagination {
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.5rem;
+      padding: 2rem;
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   }
 }
@@ -443,19 +446,43 @@ onMounted(() => {
   .news-container {
     .header {
       h1 {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .subtitle {
+        font-size: 0.95rem;
+      }
+    }
+    
+    .search-section {
+      margin-bottom: 1.5rem;
+      
+      .search-wrapper .search-input {
+        padding: 11px 35px 11px 40px;
+        font-size: 0.95rem;
       }
     }
     
     .articles-grid {
       grid-template-columns: 1fr;
       gap: 1rem;
+      margin-bottom: 2rem;
     }
     
     .pagination {
-      .pagination-button {
-        padding: 8px 12px;
+      padding: 1.5rem;
+      gap: 1rem;
+      
+      .page-info {
+        order: 3;
+        width: 100%;
+        text-align: center;
         font-size: 0.9rem;
+      }
+      
+      .btn {
+        width: 100%;
       }
     }
   }
