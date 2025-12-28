@@ -85,11 +85,6 @@ const toggleDarkMode = () => {
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
 }
-
-// Close mobile menu when a link is clicked
-const closeMobileMenu = () => {
-  isMobileMenuOpen.value = false
-}
 </script>
 
 <style lang="scss" scoped>
