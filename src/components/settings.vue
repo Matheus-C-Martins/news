@@ -30,33 +30,6 @@
       </div>
     </section>
 
-    <!-- Theme Settings -->
-    <section class="settings-section">
-      <div class="section-header">
-        <fa icon="fa-solid fa-palette" class="section-icon" />
-        <h2>Appearance</h2>
-      </div>
-      <div class="settings-content">
-        <p class="setting-description">Select your preferred color theme</p>
-        <div class="theme-grid">
-          <button
-            @click="toggleDarkMode"
-            :class="['theme-btn', { active: isDark }]"
-          >
-            <fa icon="fa-solid fa-moon" class="theme-icon" />
-            <span>Dark Mode</span>
-          </button>
-          <button
-            @click="toggleDarkMode"
-            :class="['theme-btn', { active: !isDark }]"
-          >
-            <fa icon="fa-solid fa-sun" class="theme-icon" />
-            <span>Light Mode</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
     <!-- News Sources Settings -->
     <section class="settings-section">
       <div class="section-header">
@@ -150,7 +123,6 @@ import {
   setLanguage
 } from '../services/languages'
 
-const isDark = ref(false)
 const currentLanguage = ref('en')
 const sourceSearchQuery = ref('')
 const selectedSources = ref([])
@@ -175,14 +147,6 @@ const filteredSources = computed(() => {
 })
 
 onMounted(() => {
-  // Load dark mode preference
-  const savedMode = localStorage.getItem('isDarkMode')
-  if (savedMode !== null) {
-    isDark.value = savedMode === 'true'
-  } else {
-    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
-  }
-
   // Load language preference
   currentLanguage.value = getCurrentLanguage()
 
@@ -211,20 +175,11 @@ watch(
   { deep: true }
 )
 
-const toggleDarkMode = () => {
-  isDark.value = !isDark.value
-  localStorage.setItem('isDarkMode', isDark.value)
-  const html = document.documentElement
-  if (isDark.value) {
-    html.classList.add('dark-mode')
-  } else {
-    html.classList.remove('dark-mode')
-  }
-}
-
 const changeLanguage = (code) => {
   currentLanguage.value = code
   setLanguage(code)
+  // Dispatch custom event for language change
+  window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: code } }))
 }
 
 const clearAllSources = () => {
@@ -356,49 +311,6 @@ const clearAllSources = () => {
         color: white;
         border-color: var(--primary);
         box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-      }
-    }
-  }
-
-  // Theme Settings
-  .theme-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-
-    .theme-btn {
-      padding: 1.5rem 1rem;
-      border: 2px solid var(--border-color);
-      border-radius: 10px;
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.75rem;
-
-      .theme-icon {
-        font-size: 2rem;
-        color: var(--primary);
-      }
-
-      &:hover {
-        border-color: var(--primary);
-        background: rgba(16, 185, 129, 0.1);
-        transform: translateY(-2px);
-      }
-
-      &.active {
-        background: var(--primary);
-        color: white;
-        border-color: var(--primary);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-
-        .theme-icon {
-          color: white;
-        }
       }
     }
   }
