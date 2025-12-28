@@ -23,7 +23,7 @@
       
       <div class="card-meta">
         <span class="meta-author" v-if="article.author">
-          <fa icon="fa-solid fa-user" /> {{ article.author }}
+          <fa icon="fa-solid fa-user" /> {{ truncateText(article.author, 30) }}
         </span>
         <span class="meta-date">
           <fa icon="fa-solid fa-clock" /> {{ formatDate(article.publishedAt) }}
@@ -83,7 +83,8 @@ const handleImageError = (event) => {
 .news-card {
   display: flex;
   flex-direction: column;
-  background: var(--light);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -93,6 +94,7 @@ const handleImageError = (event) => {
   &:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     transform: translateY(-4px);
+    border-color: var(--primary);
   }
   
   .card-image-wrapper {
@@ -100,7 +102,7 @@ const handleImageError = (event) => {
     width: 100%;
     height: 200px;
     overflow: hidden;
-    background: var(--grey);
+    background: var(--text-secondary);
     
     .card-image {
       width: 100%;
@@ -123,7 +125,7 @@ const handleImageError = (event) => {
       
       .placeholder-icon {
         font-size: 3rem;
-        color: var(--grey);
+        color: var(--text-secondary);
       }
     }
     
@@ -152,7 +154,7 @@ const handleImageError = (event) => {
       margin: 0 0 8px 0;
       font-size: 1rem;
       font-weight: 600;
-      color: var(--dark);
+      color: var(--text-primary);
       line-height: 1.4;
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -163,7 +165,7 @@ const handleImageError = (event) => {
     .card-description {
       margin: 0 0 12px 0;
       font-size: 0.875rem;
-      color: var(--grey);
+      color: var(--text-secondary);
       line-height: 1.5;
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -178,7 +180,7 @@ const handleImageError = (event) => {
       margin-bottom: 12px;
       flex-wrap: wrap;
       font-size: 0.75rem;
-      color: var(--grey);
+      color: var(--text-secondary);
       
       .meta-author,
       .meta-date {
