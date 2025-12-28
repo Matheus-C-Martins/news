@@ -2,8 +2,8 @@
   <article class="news-card">
     <div class="card-image-wrapper">
       <img 
-        v-if="safeImageUrl" 
-        :src="safeImageUrl" 
+        v-if="article.urlToImage && isHttpsUrl(article.urlToImage)" 
+        :src="article.urlToImage" 
         :alt="article.title"
         class="card-image"
         @error="handleImageError"
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { defineProps, computed } from 'vue'
+import { defineProps } from 'vue'
 
 defineProps({
   article: {
@@ -53,26 +53,17 @@ defineProps({
   }
 })
 
-// SECURITY FIX: Validate and sanitize image URLs to ensure HTTPS protocol
-// This prevents mixed content warnings and potential security issues
-const safeImageUrl = computed(() => {
-  if (!article?.urlToImage) return null
-  
+// SECURITY FIX: Validate HTTPS URLs
+const isHttpsUrl = (url) => {
+  if (!url) return false
   try {
-    const url = new URL(article.urlToImage)
-    // Only allow HTTPS images - reject HTTP to prevent mixed content
-    if (url.protocol === 'https:') {
-      return article.urlToImage
-    }
-    // Log warning for HTTP images but don't display them
-    console.warn('Blocked HTTP image URL for security:', article.urlToImage)
-    return null
+    const urlObj = new URL(url)
+    return urlObj.protocol === 'https:'
   } catch (error) {
-    // Invalid URL format
-    console.warn('Invalid image URL:', article.urlToImage)
-    return null
+    console.warn('Invalid image URL:', url)
+    return false
   }
-})
+}
 
 const truncateText = (text, maxLength) => {
   if (!text) return ''
