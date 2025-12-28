@@ -4,7 +4,7 @@
  * Syncs with localStorage and automatically applies changes
  */
 
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { getCurrentLanguage, setLanguage } from '@/services/languages'
 
 // Reactive settings state
