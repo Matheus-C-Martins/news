@@ -32,7 +32,7 @@
       </div>
 
       <div class="navbar-controls">
-        <router-link to="/settings" class="control-btn settings-btn" title="Settings" @click="isMobileMenuOpen = false">
+        <router-link to="/news/settings" class="control-btn settings-btn" title="Settings" @click="isMobileMenuOpen = false">
           <fa icon="fa-solid fa-gear" />
         </router-link>
 
