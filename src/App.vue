@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import Navbar from './components/navbar.vue'
 import { useSettings, isDarkMode, currentLanguage } from './composables/useSettings'
 
@@ -18,12 +18,20 @@ initializeSettings()
 
 const routeKey = ref(0)
 
+// Handler function for language change event
+const handleLanguageChange = () => {
+  // Force re-render by updating the key
+  routeKey.value += 1
+}
+
 // Watch for language changes via custom event
 onMounted(() => {
-  window.addEventListener('languageChanged', () => {
-    // Force re-render by updating the key
-    routeKey.value += 1
-  })
+  window.addEventListener('languageChanged', handleLanguageChange)
+})
+
+// SECURITY FIX: Clean up event listener on unmount to prevent memory leaks
+onBeforeUnmount(() => {
+  window.removeEventListener('languageChanged', handleLanguageChange)
 })
 
 // Also watch the currentLanguage ref directly
