@@ -51,7 +51,7 @@ export async function fetchNewsByCategory(category = 'general', page = 1, langua
     const lang = language || getCurrentLanguage()
     const country = getCountryForLanguage(lang)
     
-    const endpoint = `${VERCEL_API_URL}?category=${category}&page=${page}&country=${country}`
+    const endpoint = `${VERCEL_API_URL}?category=${category}&page=${page}&language=${country}`
     const response = await fetch(endpoint)
     
     if (!response.ok) {
@@ -97,7 +97,7 @@ export async function searchNews(query, sortBy = 'relevancy', page = 1, language
     const lang = language || getCurrentLanguage()
     const country = getCountryForLanguage(lang)
     
-    const endpoint = `${VERCEL_API_URL}?q=${encodeURIComponent(query)}&sortBy=${sortBy}&page=${page}&country=${country}`
+    const endpoint = `${VERCEL_API_URL}?q=${encodeURIComponent(query)}&sortBy=${sortBy}&page=${page}&language=${country}`
     const response = await fetch(endpoint)
     
     if (!response.ok) {
@@ -138,7 +138,7 @@ export async function fetchTopHeadlines(country = null, page = 1, language = nul
     const lang = language || getCurrentLanguage()
     const countryCode = country || getCountryForLanguage(lang)
     
-    const endpoint = `${VERCEL_API_URL}?country=${countryCode}&page=${page}`
+    const endpoint = `${VERCEL_API_URL}?language=${countryCode}&page=${page}`
     const response = await fetch(endpoint)
     
     if (!response.ok) {
