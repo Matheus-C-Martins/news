@@ -10,27 +10,27 @@
       <!-- Desktop Menu -->
       <div class="navbar-menu" :class="{ active: isMobileMenuOpen }">
         <div class="nav-links">
-          <router-link to="/" class="nav-link" exact-active-class="active">
+          <router-link to="/" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-earth-europe" />
             <span>All News</span>
           </router-link>
-          <router-link to="/shows" class="nav-link" exact-active-class="active">
+          <router-link to="/shows" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-film" />
             <span>Entertainment</span>
           </router-link>
-          <router-link to="/sports" class="nav-link" exact-active-class="active">
+          <router-link to="/sports" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-medal" />
             <span>Sports</span>
           </router-link>
-          <router-link to="/weather" class="nav-link" exact-active-class="active">
+          <router-link to="/weather" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-sun" />
             <span>Weather</span>
           </router-link>
-          <router-link to="/technology" class="nav-link" exact-active-class="active">
+          <router-link to="/technology" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-microchip" />
             <span>Technology</span>
           </router-link>
-          <router-link to="/finance" class="nav-link" exact-active-class="active">
+          <router-link to="/finance" class="nav-link" @click="isMobileMenuOpen = false">
             <fa icon="fa-solid fa-chart-line" />
             <span>Finance</span>
           </router-link>
@@ -46,7 +46,7 @@
         </button>
 
         <!-- Settings -->
-        <router-link to="/settings" class="control-btn settings-btn" title="Settings">
+        <router-link to="/settings" class="control-btn settings-btn" title="Settings" @click="isMobileMenuOpen = false">
           <fa icon="fa-solid fa-gear" />
         </router-link>
 
@@ -212,7 +212,17 @@ const toggleMobileMenu = () => {
     }
   }
 
-  &.active {
+  &.router-link-active {
+    background: rgba(74, 222, 128, 0.2);
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+
+    fa {
+      color: var(--primary);
+    }
+  }
+
+  &.router-link-exact-active {
     background: rgba(74, 222, 128, 0.2);
     color: var(--primary);
     border-bottom: 2px solid var(--primary);
@@ -232,7 +242,8 @@ const toggleMobileMenu = () => {
       display: inline;
     }
 
-    &.active {
+    &.router-link-active,
+    &.router-link-exact-active {
       background: rgba(74, 222, 128, 0.15);
       border-bottom: 3px solid var(--primary);
       border-radius: 0;
