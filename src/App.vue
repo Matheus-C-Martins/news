@@ -1,13 +1,15 @@
 <template>
   <div class="app" :class="{ 'dark-mode': isDarkMode }">
-    <Sidebar :is-dark="isDarkMode" @toggle-dark-mode="toggleDarkMode" />
-    <router-view />
+    <Navbar :is-dark="isDarkMode" @toggle-dark-mode="toggleDarkMode" />
+    <main>
+      <router-view />
+    </main>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import Sidebar from './components/sidebar.vue'
+import Navbar from './components/navbar.vue'
 
 // Dark mode state
 const isDarkMode = ref(false)
@@ -51,7 +53,6 @@ const applyDarkMode = (isDark) => {
     --dark: #1e293b;
     --dark-alt: #334155;
     --light: #f1f5f9;
-    --sidebar-width: 300px;
     --bg-primary: #ffffff;
     --bg-secondary: #f8fafc;
     --text-primary: #1e293b;
@@ -93,22 +94,23 @@ const applyDarkMode = (isDark) => {
 
   .app {
     display: flex;
+    flex-direction: column;
     min-height: 100vh;
     background: var(--bg-primary);
     transition: background-color 0.3s ease;
 
     main {
-      flex: 1 1 0;
+      flex: 1;
       padding: 2rem;
       background: var(--bg-primary);
       color: var(--text-primary);
       transition: background-color 0.3s ease, color 0.3s ease;
 
-      @media (max-width: 1024px) {
-        padding-left: 6rem;
+      @media (max-width: 768px) {
+        padding: 1.5rem 1rem;
       }
 
-      @media (max-width: 640px) {
+      @media (max-width: 480px) {
         padding: 1rem;
       }
     }
