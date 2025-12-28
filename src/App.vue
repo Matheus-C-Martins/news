@@ -8,53 +8,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, provide, watch } from 'vue'
+import { watch } from 'vue'
 import Navbar from './components/navbar.vue'
-import { getCurrentLanguage } from './services/languages'
+import { useSettings, isDarkMode, currentLanguage } from './composables/useSettings'
 
-// Dark mode state
-const isDarkMode = ref(false)
-const currentLanguage = ref('en')
+// Initialize settings from localStorage and provide globally
+const { initializeSettings } = useSettings()
+initializeSettings()
 
-// Initialize dark mode from localStorage
-onMounted(() => {
-  const savedMode = localStorage.getItem('isDarkMode')
-  if (savedMode !== null) {
-    isDarkMode.value = savedMode === 'true'
-    applyDarkMode(isDarkMode.value)
-  } else {
-    // Check system preference
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    isDarkMode.value = prefersDark
-    applyDarkMode(prefersDark)
-  }
-
-  // Initialize language
-  currentLanguage.value = getCurrentLanguage()
+// Watch for changes and update the key for router-view to force re-render
+watch(currentLanguage, () => {
+  // Router-view will re-render due to key change
 })
-
-// Watch for language changes in localStorage
-watch(
-  () => localStorage.getItem('appLanguage'),
-  (newLang) => {
-    if (newLang) {
-      currentLanguage.value = newLang
-    }
-  }
-)
-
-const applyDarkMode = (isDark) => {
-  const html = document.documentElement
-  if (isDark) {
-    html.classList.add('dark-mode')
-  } else {
-    html.classList.remove('dark-mode')
-  }
-}
-
-// Provide language to all child components
-provide('currentLanguage', currentLanguage)
-provide('isDarkMode', isDarkMode)
 </script>
 
 <style lang="scss">
