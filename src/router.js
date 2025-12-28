@@ -31,14 +31,14 @@ const routes=[
         path: baseURL+'/technology'
     },
     {
-        name:'Shows',
+        name:'Entertainment',
         component: Shows,
-        path: baseURL+'/shows'
+        path: baseURL+'/entertainment'
     },
     {
-        name:'Finance',
+        name:'Business',
         component: Finance,
-        path: baseURL+'/finance'
+        path: baseURL+'/business'
     },
     {
         name:'Settings',
