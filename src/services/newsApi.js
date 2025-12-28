@@ -34,7 +34,7 @@ function validateAndSanitizeQuery(query) {
   }
 
   // Allow alphanumeric, spaces, and common punctuation
-  if (!/^[a-zA-Z0-9\s\-\.\,\&\(\)\']+(\s[a-zA-Z0-9\-\.\,\&\(\)\']+)*$/.test(sanitized)) {
+  if (!/^[a-zA-Z0-9\s\-.,&()']+(\s[a-zA-Z0-9\-.,&()"']+)*$/.test(sanitized)) {
     throw new Error('Search contains invalid characters')
   }
 
