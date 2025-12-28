@@ -12,7 +12,7 @@
         <fa icon="fa-solid fa-image" class="placeholder-icon" />
       </div>
       <div class="card-source">
-        {{ article.source.name }}
+        <span class="badge badge-small">{{ article.source.name }}</span>
       </div>
     </div>
     
@@ -34,7 +34,7 @@
         :href="article.url" 
         target="_blank" 
         rel="noopener noreferrer"
-        class="card-button"
+        class="btn btn-primary btn-sm"
       >
         Read Article
         <fa icon="fa-solid fa-arrow-right" />
@@ -83,17 +83,23 @@ const handleImageError = (event) => {
 .news-card {
   display: flex;
   flex-direction: column;
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, calc(var(--glass-opacity) * 0.6));
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   height: 100%;
   
+  html.dark-mode & {
+    background: rgba(30, 41, 59, calc(var(--glass-opacity) * 1.2));
+  }
+  
   &:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-6px);
     border-color: var(--primary);
   }
   
@@ -102,16 +108,16 @@ const handleImageError = (event) => {
     width: 100%;
     height: 200px;
     overflow: hidden;
-    background: var(--text-secondary);
+    background: linear-gradient(135deg, var(--primary-light) 0%, rgba(16, 185, 129, 0.1) 100%);
     
     .card-image {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.3s ease;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       
       .news-card:hover & {
-        transform: scale(1.05);
+        transform: scale(1.08);
       }
     }
     
@@ -121,26 +127,28 @@ const handleImageError = (event) => {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, var(--dark-alt) 0%, var(--dark) 100%);
+      background: linear-gradient(135deg, var(--primary-light) 0%, rgba(139, 92, 246, 0.08) 100%);
       
       .placeholder-icon {
-        font-size: 3rem;
-        color: var(--text-secondary);
+        font-size: 3.5rem;
+        color: var(--primary);
+        opacity: 0.5;
       }
     }
     
     .card-source {
       position: absolute;
-      bottom: 8px;
-      left: 8px;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      backdrop-filter: blur(4px);
+      bottom: 12px;
+      left: 12px;
+      
+      .badge-small {
+        font-size: 0.7rem;
+        padding: 0.35rem 0.75rem;
+        background: rgba(15, 23, 42, 0.9);
+        color: white;
+        border: none;
+        backdrop-filter: blur(8px);
+      }
     }
   }
   
@@ -148,23 +156,24 @@ const handleImageError = (event) => {
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 16px;
+    padding: 18px;
     
     .card-title {
-      margin: 0 0 8px 0;
-      font-size: 1rem;
-      font-weight: 600;
+      margin: 0 0 10px 0;
+      font-size: 1.05rem;
+      font-weight: 700;
       color: var(--text-primary);
       line-height: 1.4;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      letter-spacing: -0.3px;
     }
     
     .card-description {
-      margin: 0 0 12px 0;
-      font-size: 0.875rem;
+      margin: 0 0 14px 0;
+      font-size: 0.9rem;
       color: var(--text-secondary);
       line-height: 1.5;
       display: -webkit-box;
@@ -176,47 +185,30 @@ const handleImageError = (event) => {
     
     .card-meta {
       display: flex;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 14px;
+      margin-bottom: 14px;
       flex-wrap: wrap;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       color: var(--text-secondary);
       
       .meta-author,
       .meta-date {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 5px;
         
         fa {
-          font-size: 0.7rem;
+          font-size: 0.75rem;
+          color: var(--primary);
         }
       }
     }
     
-    .card-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: var(--primary);
-      color: white;
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      border: 2px solid var(--primary);
+    .btn {
+      width: 100%;
       
       &:hover {
-        background: var(--primary-alt);
-        border-color: var(--primary-alt);
         gap: 12px;
-      }
-      
-      fa {
-        font-size: 0.75rem;
       }
     }
   }
@@ -229,16 +221,41 @@ const handleImageError = (event) => {
     }
     
     .card-content {
+      padding: 14px;
+      
+      .card-title {
+        font-size: 1rem;
+        margin-bottom: 8px;
+      }
+      
+      .card-description {
+        font-size: 0.85rem;
+        margin-bottom: 10px;
+      }
+      
+      .card-meta {
+        font-size: 0.75rem;
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .news-card {
+    .card-image-wrapper {
+      height: 140px;
+    }
+    
+    .card-content {
       padding: 12px;
       
       .card-title {
         font-size: 0.95rem;
-        margin-bottom: 6px;
       }
       
       .card-description {
         font-size: 0.8rem;
-        margin-bottom: 8px;
       }
     }
   }
