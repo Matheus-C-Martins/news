@@ -1,13 +1,641 @@
 <template>
-  <main id="settings-page">
-    <h1>SETTINGS</h1>
+  <main id="settings-page" class="settings-container">
+    <div class="settings-header">
+      <h1>Settings</h1>
+      <p class="subtitle">Customize your news experience</p>
+    </div>
+
+    <!-- Language Settings -->
+    <section class="settings-section">
+      <div class="section-header">
+        <fa icon="fa-solid fa-globe" class="section-icon" />
+        <h2>Language</h2>
+      </div>
+      <div class="settings-content">
+        <p class="setting-description">Choose your preferred language for the application</p>
+        <div class="language-grid">
+          <button
+            v-for="lang in languages"
+            :key="lang.code"
+            @click="setLanguage(lang.code)"
+            :class="['language-btn', { active: currentLanguage === lang.code }]"
+          >
+            <span class="lang-flag">{{ lang.flag }}</span>
+            <span class="lang-name">{{ lang.name }}</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Theme Settings -->
+    <section class="settings-section">
+      <div class="section-header">
+        <fa icon="fa-solid fa-palette" class="section-icon" />
+        <h2>Appearance</h2>
+      </div>
+      <div class="settings-content">
+        <p class="setting-description">Select your preferred color theme</p>
+        <div class="theme-grid">
+          <button
+            @click="toggleDarkMode"
+            :class="['theme-btn', { active: isDark }]"
+          >
+            <fa icon="fa-solid fa-moon" class="theme-icon" />
+            <span>Dark Mode</span>
+          </button>
+          <button
+            @click="toggleDarkMode"
+            :class="['theme-btn', { active: !isDark }]"
+          >
+            <fa icon="fa-solid fa-sun" class="theme-icon" />
+            <span>Light Mode</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- News Sources Settings -->
+    <section class="settings-section">
+      <div class="section-header">
+        <fa icon="fa-solid fa-newspaper" class="section-icon" />
+        <h2>News Sources</h2>
+      </div>
+      <div class="settings-content">
+        <p class="setting-description">Select which news sources you want to receive articles from</p>
+        <div class="source-controls">
+          <div class="control-group">
+            <label for="source-search" class="search-label">Search sources</label>
+            <div class="search-wrapper">
+              <fa icon="fa-solid fa-search" class="search-icon" />
+              <input
+                id="source-search"
+                v-model="sourceSearchQuery"
+                type="text"
+                placeholder="Search news sources..."
+                class="source-search"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Sources Grid -->
+        <div class="sources-grid">
+          <div v-if="filteredSources.length === 0" class="no-sources">
+            <fa icon="fa-solid fa-inbox" />
+            <p>No sources found matching your search</p>
+          </div>
+          <div
+            v-for="source in filteredSources"
+            :key="source.id"
+            class="source-card"
+          >
+            <div class="source-header">
+              <label :for="`source-${source.id}`" class="source-title">
+                {{ source.name }}
+              </label>
+              <input
+                :id="`source-${source.id}`"
+                v-model="selectedSources"
+                type="checkbox"
+                :value="source.id"
+                class="source-checkbox"
+              />
+            </div>
+            <p class="source-description">{{ source.description }}</p>
+            <div class="source-meta">
+              <span class="country-badge">{{ source.country }}</span>
+              <span class="category-badge">{{ source.category }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected Count -->
+        <div class="sources-summary">
+          <p>{{ selectedSources.length }} source{{ selectedSources.length !== 1 ? 's' : '' }} selected</p>
+          <button @click="clearAllSources" class="btn btn-outline" v-if="selectedSources.length > 0">
+            Clear All
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="settings-section">
+      <div class="section-header">
+        <fa icon="fa-solid fa-info-circle" class="section-icon" />
+        <h2>About</h2>
+      </div>
+      <div class="settings-content">
+        <div class="about-info">
+          <p><strong>NewsHub</strong></p>
+          <p>Version 1.0.0</p>
+          <p class="about-description">Your personal news aggregator powered by NewsAPI</p>
+        </div>
+      </div>
+    </section>
   </main>
 </template>
-  
-<script setup>
 
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+
+const isDark = ref(false)
+const currentLanguage = ref('en')
+const sourceSearchQuery = ref('')
+const selectedSources = ref([])
+
+const languages = [
+  { code: 'en', name: 'English', flag: '🇺🇸' },
+  { code: 'pt', name: 'Português', flag: '🇵🇹' },
+  { code: 'es', name: 'Español', flag: '🇪🇸' },
+  { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+]
+
+const availableSources = [
+  // Tech Sources
+  { id: 'techcrunch', name: 'TechCrunch', category: 'Technology', country: 'USA', description: 'Breaking tech news and in-depth analysis' },
+  { id: 'wired', name: 'Wired', category: 'Technology', country: 'USA', description: 'Technology, business, and culture' },
+  { id: 'the-verge', name: 'The Verge', category: 'Technology', country: 'USA', description: 'Technology, science, and culture' },
+  { id: 'hacker-news', name: 'Hacker News', category: 'Technology', country: 'USA', description: 'Community driven tech news' },
+  
+  // Business Sources
+  { id: 'cnbc', name: 'CNBC', category: 'Business', country: 'USA', description: 'Business news and financial markets' },
+  { id: 'bloomberg', name: 'Bloomberg', category: 'Business', country: 'USA', description: 'Global business and financial news' },
+  { id: 'financial-times', name: 'Financial Times', category: 'Business', country: 'UK', description: 'International business and finance' },
+  { id: 'reuters', name: 'Reuters', category: 'Business', country: 'UK', description: 'Global news and information' },
+  
+  // Sports Sources
+  { id: 'espn', name: 'ESPN', category: 'Sports', country: 'USA', description: 'Sports news and analysis' },
+  { id: 'sports-illustrated', name: 'Sports Illustrated', category: 'Sports', country: 'USA', description: 'Sports news and features' },
+  { id: 'bbc-sport', name: 'BBC Sport', category: 'Sports', country: 'UK', description: 'International sports coverage' },
+  
+  // Entertainment Sources
+  { id: 'entertainment-weekly', name: 'Entertainment Weekly', category: 'Entertainment', country: 'USA', description: 'Entertainment and celebrity news' },
+  { id: 'variety', name: 'Variety', category: 'Entertainment', country: 'USA', description: 'Entertainment industry news' },
+  { id: 'bbc-entertainment', name: 'BBC Entertainment', category: 'Entertainment', country: 'UK', description: 'Entertainment and media' },
+  
+  // General Sources
+  { id: 'bbc-news', name: 'BBC News', category: 'General', country: 'UK', description: 'World news and current events' },
+  { id: 'cnn', name: 'CNN', category: 'General', country: 'USA', description: 'Breaking news and world coverage' },
+  { id: 'the-new-york-times', name: 'The New York Times', category: 'General', country: 'USA', description: 'News, politics, and analysis' },
+  { id: 'the-guardian', name: 'The Guardian', category: 'General', country: 'UK', description: 'News, opinions, and investigations' },
+  { id: 'associated-press', name: 'Associated Press', category: 'General', country: 'USA', description: 'Breaking news from around the world' },
+]
+
+const filteredSources = computed(() => {
+  if (!sourceSearchQuery.value.trim()) {
+    return availableSources
+  }
+  const query = sourceSearchQuery.value.toLowerCase()
+  return availableSources.filter(
+    source =>
+      source.name.toLowerCase().includes(query) ||
+      source.category.toLowerCase().includes(query) ||
+      source.country.toLowerCase().includes(query)
+  )
+})
+
+onMounted(() => {
+  // Load dark mode preference
+  const savedMode = localStorage.getItem('isDarkMode')
+  if (savedMode !== null) {
+    isDark.value = savedMode === 'true'
+  } else {
+    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+  }
+
+  // Load language preference
+  const savedLanguage = localStorage.getItem('appLanguage')
+  if (savedLanguage) {
+    currentLanguage.value = savedLanguage
+  }
+
+  // Load selected sources
+  const savedSources = localStorage.getItem('selectedNewsSources')
+  if (savedSources) {
+    selectedSources.value = JSON.parse(savedSources)
+  }
+})
+
+const toggleDarkMode = () => {
+  isDark.value = !isDark.value
+  localStorage.setItem('isDarkMode', isDark.value)
+  const html = document.documentElement
+  if (isDark.value) {
+    html.classList.add('dark-mode')
+  } else {
+    html.classList.remove('dark-mode')
+  }
+}
+
+const setLanguage = (code) => {
+  currentLanguage.value = code
+  localStorage.setItem('appLanguage', code)
+  // TODO: Implement actual language switching logic
+}
+
+const clearAllSources = () => {
+  selectedSources.value = []
+  localStorage.setItem('selectedNewsSources', JSON.stringify([]))
+}
+</script>
+
+<script>
+// Watch for changes and save to localStorage
+import { watch } from 'vue'
+
+export default {
+  setup() {
+    const selectedSources = ref([])
+    
+    watch(
+      selectedSources,
+      (newSources) => {
+        localStorage.setItem('selectedNewsSources', JSON.stringify(newSources))
+      },
+      { deep: true }
+    )
+    
+    return { selectedSources }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
+.settings-container {
+  max-width: 1000px;
+  margin: 0 auto;
 
+  .settings-header {
+    margin-bottom: 3rem;
+    animation: slideInUp 0.5s ease-out;
+
+    h1 {
+      font-size: 2.5rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+  }
+
+  .settings-section {
+    margin-bottom: 2.5rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, calc(var(--glass-opacity) * 0.6));
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+    animation: slideInUp 0.5s ease-out;
+
+    html.dark-mode & {
+      background: rgba(30, 41, 59, calc(var(--glass-opacity) * 1.2));
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border-color);
+
+      .section-icon {
+        font-size: 1.5rem;
+        color: var(--primary);
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: var(--text-primary);
+      }
+    }
+
+    .settings-content {
+      .setting-description {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  // Language Settings
+  .language-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+
+    .language-btn {
+      padding: 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+
+      .lang-flag {
+        font-size: 2rem;
+      }
+
+      .lang-name {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      &:hover {
+        border-color: var(--primary);
+        background: rgba(16, 185, 129, 0.1);
+        transform: translateY(-2px);
+      }
+
+      &.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      }
+    }
+  }
+
+  // Theme Settings
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+
+    .theme-btn {
+      padding: 1.5rem 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+
+      .theme-icon {
+        font-size: 2rem;
+        color: var(--primary);
+      }
+
+      &:hover {
+        border-color: var(--primary);
+        background: rgba(16, 185, 129, 0.1);
+        transform: translateY(-2px);
+      }
+
+      &.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+
+        .theme-icon {
+          color: white;
+        }
+      }
+    }
+  }
+
+  // News Sources Settings
+  .source-controls {
+    margin-bottom: 2rem;
+
+    .control-group {
+      .search-label {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        .search-icon {
+          position: absolute;
+          left: 16px;
+          color: var(--primary);
+          pointer-events: none;
+          font-size: 1rem;
+        }
+
+        .source-search {
+          width: 100%;
+          padding: 12px 40px 12px 40px;
+          font-size: 0.95rem;
+          border: 2px solid var(--border-color);
+          border-radius: 10px;
+          background: var(--bg-secondary);
+          color: var(--text-primary);
+          transition: all 0.2s ease;
+
+          &:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+          }
+
+          &::placeholder {
+            color: var(--text-secondary);
+          }
+        }
+      }
+    }
+  }
+
+  .sources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    .no-sources {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text-secondary);
+
+      fa {
+        font-size: 3rem;
+        opacity: 0.4;
+        margin-bottom: 1rem;
+      }
+    }
+
+    .source-card {
+      padding: 1.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .source-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+        gap: 1rem;
+
+        .source-title {
+          font-weight: 600;
+          color: var(--text-primary);
+          cursor: pointer;
+          flex: 1;
+        }
+
+        .source-checkbox {
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+          accent-color: var(--primary);
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+      }
+
+      .source-description {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        margin: 0 0 1rem 0;
+      }
+
+      .source-meta {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+
+        .country-badge,
+        .category-badge {
+          display: inline-block;
+          padding: 0.375rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          background: rgba(16, 185, 129, 0.1);
+          color: var(--primary);
+        }
+      }
+    }
+  }
+
+  .sources-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(16, 185, 129, 0.05);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+
+    p {
+      margin: 0;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .btn-outline {
+      padding: 0.5rem 1.25rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  // About Section
+  .about-info {
+    padding: 1rem;
+
+    p {
+      margin: 0.5rem 0;
+      color: var(--text-primary);
+
+      &:first-child {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+      }
+
+      &:nth-child(2) {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+      }
+
+      &.about-description {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-top: 1rem;
+      }
+    }
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-container {
+    .settings-section {
+      padding: 1.5rem;
+    }
+
+    .language-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sources-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .sources-summary {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+  }
+}
 </style>
