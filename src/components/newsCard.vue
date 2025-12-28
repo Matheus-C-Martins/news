@@ -56,20 +56,20 @@ defineProps({
 // SECURITY FIX: Validate and sanitize image URLs to ensure HTTPS protocol
 // This prevents mixed content warnings and potential security issues
 const safeImageUrl = computed(() => {
-  if (!article.value?.urlToImage) return null
+  if (!article?.urlToImage) return null
   
   try {
-    const url = new URL(article.value.urlToImage)
+    const url = new URL(article.urlToImage)
     // Only allow HTTPS images - reject HTTP to prevent mixed content
     if (url.protocol === 'https:') {
-      return article.value.urlToImage
+      return article.urlToImage
     }
     // Log warning for HTTP images but don't display them
-    console.warn('Blocked HTTP image URL for security:', article.value.urlToImage)
+    console.warn('Blocked HTTP image URL for security:', article.urlToImage)
     return null
   } catch (error) {
     // Invalid URL format
-    console.warn('Invalid image URL:', article.value.urlToImage)
+    console.warn('Invalid image URL:', article.urlToImage)
     return null
   }
 })
