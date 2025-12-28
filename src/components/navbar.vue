@@ -1,13 +1,11 @@
 <template>
   <nav class="navbar" :class="{ 'dark-mode': isDark }">
     <div class="navbar-container">
-      <!-- Logo (clickable) -->
       <router-link to="/news" class="navbar-logo" @click="isMobileMenuOpen = false">
         <img :src="logoURL" alt="News logo" />
         <span class="logo-text">NewsHub</span>
       </router-link>
 
-      <!-- Desktop Menu -->
       <div class="navbar-menu" :class="{ active: isMobileMenuOpen }">
         <div class="nav-links">
           <router-link to="/news/shows" class="nav-link" @click="isMobileMenuOpen = false">
@@ -33,20 +31,11 @@
         </div>
       </div>
 
-      <!-- Right Controls -->
       <div class="navbar-controls">
-        <!-- Dark Mode Toggle -->
-        <button class="control-btn dark-mode-btn" @click="toggleDarkMode" :title="isDark ? 'Light mode' : 'Dark mode'">
-          <fa v-if="isDark" icon="fa-solid fa-sun" />
-          <fa v-else icon="fa-solid fa-moon" />
-        </button>
-
-        <!-- Settings -->
         <router-link to="/settings" class="control-btn settings-btn" title="Settings" @click="isMobileMenuOpen = false">
           <fa icon="fa-solid fa-gear" />
         </router-link>
 
-        <!-- Mobile Menu Toggle -->
         <button class="hamburger" @click="toggleMobileMenu" :class="{ active: isMobileMenuOpen }">
           <span></span>
           <span></span>
@@ -58,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineEmits, defineProps } from 'vue'
+import { ref, computed, defineProps } from 'vue'
 import logoURL from '../assets/logo.png'
 
 const props = defineProps({
@@ -68,15 +57,8 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['toggle-dark-mode'])
-
 const isMobileMenuOpen = ref(false)
-
 const isDark = computed(() => props.isDark)
-
-const toggleDarkMode = () => {
-  emit('toggle-dark-mode')
-}
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
@@ -286,12 +268,6 @@ const toggleMobileMenu = () => {
   }
 }
 
-.dark-mode-btn {
-  &:hover fa {
-    animation: rotate 0.3s ease-out;
-  }
-}
-
 .hamburger {
   display: none;
   flex-direction: column;
@@ -331,15 +307,6 @@ const toggleMobileMenu = () => {
 
   @media (max-width: 768px) {
     display: flex;
-  }
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
   }
 }
 
