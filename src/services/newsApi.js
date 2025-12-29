@@ -11,10 +11,11 @@ import {
   SOURCE_BY_LANGUAGE
 } from './languages'
 
-const API_KEY = import.meta.env.VITE_NEWS_API_KEY
+// Use VUE_APP_ prefix for Vue CLI environment variables
+const API_KEY = import.meta.env.VUE_APP_NEWS_API_KEY
 // Use custom API base URL if provided (e.g., Vercel proxy), otherwise use NewsAPI directly
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://newsapi.org/v2'
-const USE_PROXY = Boolean(import.meta.env.VITE_API_BASE_URL)
+const BASE_URL = import.meta.env.VUE_APP_VERCEL_API_URL || 'https://newsapi.org/v2'
+const USE_PROXY = Boolean(import.meta.env.VUE_APP_VERCEL_API_URL)
 
 /**
  * Validate and sanitize search query
