@@ -3,66 +3,115 @@
 // Deployed on Vercel, this allows the Vue app to call our function instead of NewsAPI directly
 
 export default async function handler(req, res) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  // CORS Configuration
+  // Allow requests from GitHub Pages and localhost (for development)
+  const allowedOrigins = [
+    'https://matheus-c-martins.github.io',
+    'http://localhost:8080',
+    'http://localhost:3000',
+    'http://127.0.0.1:8080',
+    'http://127.0.0.1:3000'
+  ];
 
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  const origin = req.headers.origin;
+  
+  // Check if origin is allowed
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else if (!origin) {
+    // For requests without origin (e.g., Postman, curl), allow wildcard
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  } else {
+    // For other origins, still set wildcard to be permissive
+    // You can change this to deny if you want stricter control
+    res.setHeader('Access-Control-Allow-Origin', '*');
   }
 
-  // Only allow GET requests
+  // Essential CORS headers
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Max-Age', '86400'); // Cache preflight for 24 hours
+
+  // Handle preflight OPTIONS requests
+  if (req.method === 'OPTIONS') {
+    // Return 204 No Content for preflight
+    return res.status(204).end();
+  }
+
+  // Only allow GET requests for actual data
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      status: 'error',
+      message: 'Method not allowed. Only GET and OPTIONS are supported.' 
+    });
   }
 
   try {
-    const { q, category, sortBy = 'publishedAt', language = 'en', page = '1' } = req.query;
+    const { q, category, sortBy = 'publishedAt', language = 'en', page = '1', endpoint = 'top-headlines' } = req.query;
 
     // Get API key from environment variable (never expose in client code)
-    const apiKey = process.env.VUE_APP_NEWS_API_KEY;
+    const apiKey = process.env.VUE_APP_NEWS_API_KEY || process.env.NEWS_API_KEY;
+    
     if (!apiKey) {
+      console.error('API key not found in environment variables');
       return res.status(500).json({
         status: 'error',
-        message: 'API key not configured on server'
+        message: 'API key not configured on server. Please check Vercel environment variables.'
       });
     }
 
-    // Build the NewsAPI URL
-    let url = 'https://newsapi.org/v2/';
-    if (q) {
-      // Search endpoint
-      url += 'everything?';
-      url += `q=${encodeURIComponent(q)}&`;
-    } else if (category) {
-      // Top headlines endpoint with category
-      url += 'top-headlines?';
-      url += `category=${category}&`;
+    // Build the NewsAPI URL based on endpoint
+    let url = `https://newsapi.org/v2/${endpoint}?`;
+    
+    // Add query parameters based on endpoint type
+    if (endpoint === 'everything' || q) {
+      url = 'https://newsapi.org/v2/everything?';
+      if (q) {
+        url += `q=${encodeURIComponent(q)}&`;
+      }
+      url += `sortBy=${sortBy}&`;
     } else {
-      // Top headlines endpoint (general)
-      url += 'top-headlines?';
+      // top-headlines endpoint
+      url = 'https://newsapi.org/v2/top-headlines?';
+      if (category) {
+        url += `category=${category}&`;
+      }
     }
 
-    // Add parameters
+    // Common parameters
     url += `language=${language}&`;
-    url += `sortBy=${sortBy}&`;
     url += `page=${page}&`;
     url += `pageSize=20&`;
     url += `apiKey=${apiKey}`;
 
+    console.log(`Proxying request to NewsAPI: ${url.replace(apiKey, 'API_KEY_HIDDEN')}`);
+
     // Make the request to NewsAPI
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'NewsHub-Proxy/1.0',
+      }
+    });
+
     const data = await response.json();
 
-    // Return the response to the client
+    // Log errors for debugging
+    if (data.status === 'error') {
+      console.error('NewsAPI returned error:', data);
+    }
+
+    // Return the response to the client with appropriate status
     return res.status(response.status).json(data);
+    
   } catch (error) {
     console.error('Error proxying request to NewsAPI:', error);
+    
     return res.status(500).json({
       status: 'error',
-      message: 'Failed to fetch news: ' + error.message
+      message: 'Failed to fetch news from server',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 }
