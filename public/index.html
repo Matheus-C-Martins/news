@@ -4,7 +4,18 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://newsapi.org https://api.github.com; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+    <!-- 
+      IMPORTANT: Content Security Policy (CSP)
+      If you change your Vercel proxy URL or add new API endpoints, 
+      update the connect-src directive below to include those domains.
+      
+      Current allowed connections:
+      - 'self': Same origin (your GitHub Pages site)
+      - https://newsapi.org: Direct NewsAPI calls (if needed)
+      - https://*.vercel.app: Vercel proxy (wildcard for all Vercel deployments)
+      - https://api.github.com: GitHub API calls
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data:; connect-src 'self' https://newsapi.org https://*.vercel.app https://api.github.com; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">

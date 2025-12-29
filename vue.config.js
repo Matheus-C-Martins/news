@@ -7,13 +7,15 @@ module.exports = defineConfig({
     headers: {
       // SECURITY FIX: Content Security Policy (CSP) to prevent XSS attacks
       // This header restricts the sources from which content can be loaded
+      // NOTE: This only applies to DEV SERVER, not production builds
+      // For production, see public/index.html meta tag
       'Content-Security-Policy': [
         "default-src 'self'",                    // Only allow resources from same origin
         "script-src 'self' 'unsafe-inline'",     // Allow inline scripts (needed for Vue dev server)
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",  // Allow inline styles and Google Fonts
         "img-src 'self' https: data:",           // Allow images from HTTPS and data URIs
         "font-src 'self' data: https://fonts.gstatic.com",  // Allow fonts from same origin, data URIs, and Google Fonts
-        "connect-src 'self' https://newsapi.org https://*.vercel.app", // Allow API calls to NewsAPI and Vercel
+        "connect-src 'self' https://newsapi.org https://*.vercel.app https://api.github.com", // Allow API calls
         "frame-ancestors 'none'",                // Prevent framing (clickjacking protection)
         "base-uri 'self'",                       // Restrict base tag
         "form-action 'self'"                     // Restrict form submissions
