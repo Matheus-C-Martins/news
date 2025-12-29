@@ -17,6 +17,18 @@ const API_KEY = import.meta.env.VUE_APP_NEWS_API_KEY
 const BASE_URL = import.meta.env.VUE_APP_VERCEL_API_URL || 'https://newsapi.org/v2'
 const USE_PROXY = Boolean(import.meta.env.VUE_APP_VERCEL_API_URL)
 
+// Debug log for environment variables (only show if API_KEY is missing)
+if (!API_KEY && !USE_PROXY) {
+  console.warn(
+    'Warning: VUE_APP_NEWS_API_KEY environment variable is not set. ' +
+    'API requests will fail. Please set the environment variable in your .env.local file.'
+  )
+}
+
+if (USE_PROXY) {
+  console.log('Using API proxy at:', BASE_URL)
+}
+
 /**
  * Validate and sanitize search query
  * @param {string} query - Search query to validate
@@ -38,7 +50,7 @@ function validateAndSanitizeQuery(query) {
   }
 
   // Allow alphanumeric, spaces, and common punctuation
-  if (!/^[a-zA-Z0-9\s\-.,&()']+(\s[a-zA-Z0-9\-.,&()"']+)*$/.test(sanitized)) {
+  if (!/^[a-zA-Z0-9\s\-.,&()']+([\s][a-zA-Z0-9\-.,&()"']+)*$/.test(sanitized)) {
     throw new Error('Search contains invalid characters')
   }
 
@@ -117,6 +129,28 @@ function buildApiUrl(endpoint, params) {
 }
 
 /**
+ * Handle API response errors
+ * @param {Response} response - Fetch response object
+ * @param {string} context - Context for error message
+ */
+function handleResponseError(response, context) {
+  let errorMessage = `API Error: ${response.status} ${response.statusText}`
+  
+  if (response.status === 401) {
+    errorMessage = 'Authentication failed: Invalid API key. Check your VUE_APP_NEWS_API_KEY environment variable.'
+  } else if (response.status === 403) {
+    errorMessage = 'Access denied: Your API key may not have permission for this endpoint.'
+  } else if (response.status === 429) {
+    errorMessage = 'Rate limit exceeded: Too many requests. Please try again later.'
+  } else if (response.status === 500) {
+    errorMessage = 'Server error: The API service is temporarily unavailable.'
+  }
+  
+  console.error(`[${context}] ${errorMessage}`)
+  return new Error(errorMessage)
+}
+
+/**
  * Fetch top headlines with language support
  * @param {Object} options - Query options
  * @param {string} options.category - News category (optional)
@@ -157,13 +191,23 @@ export async function fetchTopHeadlines(options = {}) {
 
   try {
     const url = buildApiUrl('top-headlines', params)
-    const response = await fetch(url, { headers: getHeaders() })
+    const headers = getHeaders()
+    
+    console.debug('Fetching top headlines:', { url, headers: Object.keys(headers) })
+    
+    const response = await fetch(url, { 
+      headers,
+      mode: 'cors',
+      credentials: 'omit'
+    })
     
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`)
+      throw handleResponseError(response, 'fetchTopHeadlines')
     }
     
-    return await response.json()
+    const data = await response.json()
+    console.debug('Top headlines fetched successfully:', data.articles?.length || 0, 'articles')
+    return data
   } catch (error) {
     console.error('Error fetching top headlines:', error)
     throw error
@@ -220,13 +264,23 @@ export async function searchNews(options = {}) {
 
   try {
     const url = buildApiUrl('everything', params)
-    const response = await fetch(url, { headers: getHeaders() })
+    const headers = getHeaders()
+    
+    console.debug('Searching news:', { query, url, headers: Object.keys(headers) })
+    
+    const response = await fetch(url, { 
+      headers,
+      mode: 'cors',
+      credentials: 'omit'
+    })
     
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`)
+      throw handleResponseError(response, 'searchNews')
     }
     
-    return await response.json()
+    const data = await response.json()
+    console.debug('Search completed successfully:', data.articles?.length || 0, 'articles')
+    return data
   } catch (error) {
     console.error('Error searching news:', error)
     throw error
@@ -264,4 +318,17 @@ export function getCurrentLanguageInfo() {
  */
 export function isUsingProxy() {
   return USE_PROXY
+}
+
+/**
+ * Get API configuration status
+ * Useful for debugging
+ */
+export function getApiConfig() {
+  return {
+    usingProxy: USE_PROXY,
+    baseUrl: BASE_URL,
+    hasApiKey: Boolean(API_KEY),
+    apiKeyLength: API_KEY ? API_KEY.length : 0
+  }
 }
