@@ -3,8 +3,10 @@
 // Deployed on Vercel, this allows the Vue app to call our function instead of NewsAPI directly
 
 export default async function handler(req, res) {
-  // CORS Configuration
-  // Allow requests from GitHub Pages and localhost (for development)
+  // Get origin from request
+  const origin = req.headers.origin;
+  
+  // Allowed origins list
   const allowedOrigins = [
     'https://matheus-c-martins.github.io',
     'http://localhost:8080',
@@ -13,30 +15,25 @@ export default async function handler(req, res) {
     'http://127.0.0.1:3000'
   ];
 
-  const origin = req.headers.origin;
-  
-  // Check if origin is allowed
+  // CRITICAL: Set CORS headers FIRST, before any logic
+  // Check if the origin is in our allowed list
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
-  } else if (!origin) {
-    // For requests without origin (e.g., Postman, curl), allow wildcard
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
   } else {
-    // For other origins, still set wildcard to be permissive
-    // You can change this to deny if you want stricter control
+    // For development/testing, allow all origins
     res.setHeader('Access-Control-Allow-Origin', '*');
   }
 
-  // Essential CORS headers
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  // Always set these headers for all requests
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Max-Age', '86400'); // Cache preflight for 24 hours
 
-  // Handle preflight OPTIONS requests
+  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
-    // Return 204 No Content for preflight
-    return res.status(204).end();
+    // Return 200 OK for preflight (some docs say 204, but 200 is more compatible)
+    return res.status(200).end();
   }
 
   // Only allow GET requests for actual data
