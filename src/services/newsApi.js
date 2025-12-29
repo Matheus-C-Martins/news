@@ -1,9 +1,13 @@
 /**
- * NewsAPI Service with Language Support and Proxy Integration
+ * NewsAPI Service - Always Using Proxy
  * 
- * Environment-aware API calling:
- * - LOCAL DEVELOPMENT: Direct calls to NewsAPI (API key in .env.local)
- * - GITHUB PAGES: Proxied calls through backend (hides API key in production)
+ * Simplified configuration:
+ * - LOCAL DEVELOPMENT: Calls proxy at VUE_APP_VERCEL_API_URL
+ * - GITHUB PAGES: Calls proxy at VUE_APP_VERCEL_API_URL
+ * 
+ * Proxy URL is set in:
+ * - .env.local (locally)
+ * - GitHub Secrets VUE_APP_VERCEL_API_URL (production)
  */
 
 import {
@@ -13,45 +17,18 @@ import {
   SOURCE_BY_LANGUAGE
 } from './languages'
 
-// Environment detection
-const isDevelopment = !import.meta.env.PROD
-const isProduction = import.meta.env.PROD
+// Get proxy URL from environment
+const PROXY_URL = import.meta.env.VUE_APP_VERCEL_API_URL || '/api'
+const BASE_URL = PROXY_URL
 
-// Environment variables (set by .env.local locally or GitHub Actions for production)
-const API_KEY = import.meta.env.VUE_APP_NEWS_API_KEY
-const PROXY_URL = import.meta.env.VUE_APP_VERCEL_API_URL
-
-// Determine which mode to use
-const USE_PROXY = Boolean(PROXY_URL)
-const BASE_URL = PROXY_URL || 'https://newsapi.org/v2'
+// Always use proxy
+const USE_PROXY = true
 
 // Debug info
-if (isDevelopment) {
-  console.log('=== NewsAPI Service Configuration ===')
-  console.log('Environment: DEVELOPMENT')
-  console.log('Using direct API calls:', !USE_PROXY)
-  if (!API_KEY) {
-    console.warn(
-      '⚠️  VUE_APP_NEWS_API_KEY is not set!\n' +
-      'For local development, copy .env.local.example to .env.local\n' +
-      'and add your NewsAPI key from https://newsapi.org'
-    )
-  } else {
-    console.log('✓ API Key loaded from .env.local')
-  }
-}
-
-if (isProduction) {
-  console.log('=== NewsAPI Service Configuration ===')
-  console.log('Environment: PRODUCTION (GitHub Pages)')
-  if (USE_PROXY) {
-    console.log('✓ Using proxy at:', PROXY_URL)
-    console.log('✓ API key is protected (hidden from browser)')
-  } else {
-    console.warn('⚠️  No proxy configured! API key is exposed in production.')
-    console.warn('For security, configure VUE_APP_VERCEL_API_URL in GitHub Secrets')
-  }
-}
+console.log('=== NewsAPI Service Configuration ===')
+console.log('Mode: ALWAYS USE PROXY')
+console.log('Proxy URL:', PROXY_URL)
+console.log('API Key: Handled by backend proxy')
 
 /**
  * Validate and sanitize search query
@@ -74,7 +51,7 @@ function validateAndSanitizeQuery(query) {
   }
 
   // Allow alphanumeric, spaces, and common punctuation
-  if (!/^[a-zA-Z0-9\s\-.,&()']+([\s][a-zA-Z0-9\-.,&()"']+)*$/.test(sanitized)) {
+  if (!/^[a-zA-Z0-9\s\-.,&()']+([\s][a-zA-Z0-9\-.,&()'"]+)*$/.test(sanitized)) {
     throw new Error('Search contains invalid characters')
   }
 
@@ -122,43 +99,23 @@ function validateCategory(category) {
 
 /**
  * Get headers for API requests
- * When using proxy: No API key (backend handles it)
- * When direct: Include API key for NewsAPI authentication
+ * No API key headers needed - proxy backend handles it
  */
 function getHeaders() {
-  const headers = {
+  return {
     'Content-Type': 'application/json'
   }
-  
-  // Only add API key for direct NewsAPI calls (not proxied)
-  if (!USE_PROXY && API_KEY) {
-    headers['X-Api-Key'] = API_KEY
-  }
-  
-  return headers
 }
 
 /**
- * Build API URL based on environment
+ * Build API URL for proxy
  * 
- * LOCAL DEVELOPMENT (direct):
- *   base: https://newsapi.org/v2
- *   url: https://newsapi.org/v2/top-headlines?language=en&...
- * 
- * GITHUB PAGES (proxied):
- *   base: https://your-backend.vercel.app/api
- *   url: https://your-backend.vercel.app/api?endpoint=top-headlines&language=en&...
+ * Format: https://proxy.vercel.app/api?endpoint=top-headlines&language=en&...
  */
 function buildApiUrl(endpoint, params) {
-  if (USE_PROXY) {
-    // Proxy mode: pass endpoint as query param
-    const proxyParams = new URLSearchParams(params)
-    proxyParams.append('endpoint', endpoint)
-    return `${BASE_URL}?${proxyParams}`
-  } else {
-    // Direct mode: endpoint in URL path
-    return `${BASE_URL}/${endpoint}?${params}`
-  }
+  const proxyParams = new URLSearchParams(params)
+  proxyParams.append('endpoint', endpoint)
+  return `${BASE_URL}?${proxyParams}`
 }
 
 /**
@@ -168,21 +125,13 @@ function handleResponseError(response, context) {
   let errorMessage = `API Error: ${response.status} ${response.statusText}`
   
   if (response.status === 401) {
-    if (USE_PROXY) {
-      errorMessage = 'Proxy authentication failed. Check your backend configuration.'
-    } else {
-      errorMessage = 'Authentication failed: Invalid API key. Check VUE_APP_NEWS_API_KEY in .env.local'
-    }
+    errorMessage = 'Proxy authentication failed. Check backend configuration.'
   } else if (response.status === 403) {
-    errorMessage = 'Access denied: API key may not have permission for this endpoint.'
+    errorMessage = 'Access denied: Backend may not have API key configured.'
   } else if (response.status === 429) {
     errorMessage = 'Rate limit exceeded: Too many requests. Please try again later.'
   } else if (response.status === 500) {
-    if (USE_PROXY) {
-      errorMessage = 'Proxy server error: Your backend service is temporarily unavailable.'
-    } else {
-      errorMessage = 'NewsAPI server error: Service temporarily unavailable.'
-    }
+    errorMessage = 'Proxy server error: Backend service temporarily unavailable.'
   }
   
   console.error(`[${context}] ${errorMessage}`)
@@ -232,9 +181,7 @@ export async function fetchTopHeadlines(options = {}) {
     const url = buildApiUrl('top-headlines', params)
     const headers = getHeaders()
     
-    if (isDevelopment) {
-      console.debug('[API] Fetching top headlines:', { url: url.split('?')[0], params: Object.fromEntries(params) })
-    }
+    console.debug('[API] Fetching top headlines:', { url: url.split('?')[0], params: Object.fromEntries(params) })
     
     const response = await fetch(url, { 
       headers,
@@ -247,9 +194,7 @@ export async function fetchTopHeadlines(options = {}) {
     }
     
     const data = await response.json()
-    if (isDevelopment) {
-      console.debug(`[API] ✓ Top headlines fetched: ${data.articles?.length || 0} articles`)
-    }
+    console.debug(`[API] ✓ Top headlines fetched: ${data.articles?.length || 0} articles`)
     return data
   } catch (error) {
     console.error('[API] Error fetching top headlines:', error.message)
@@ -309,9 +254,7 @@ export async function searchNews(options = {}) {
     const url = buildApiUrl('everything', params)
     const headers = getHeaders()
     
-    if (isDevelopment) {
-      console.debug('[API] Searching news:', { query, params: Object.fromEntries(params) })
-    }
+    console.debug('[API] Searching news:', { query, params: Object.fromEntries(params) })
     
     const response = await fetch(url, { 
       headers,
@@ -324,9 +267,7 @@ export async function searchNews(options = {}) {
     }
     
     const data = await response.json()
-    if (isDevelopment) {
-      console.debug(`[API] ✓ Search completed: ${data.articles?.length || 0} articles`)
-    }
+    console.debug(`[API] ✓ Search completed: ${data.articles?.length || 0} articles`)
     return data
   } catch (error) {
     console.error('[API] Error searching news:', error.message)
@@ -366,26 +307,11 @@ export function getCurrentLanguageInfo() {
  */
 export function getApiConfig() {
   return {
-    environment: isProduction ? 'PRODUCTION' : 'DEVELOPMENT',
-    usingProxy: USE_PROXY,
-    baseUrl: BASE_URL,
-    proxyUrl: PROXY_URL || undefined,
-    hasApiKey: Boolean(API_KEY),
-    apiKeyLength: API_KEY ? API_KEY.length : 0,
-    configStatus: {
-      development: {
-        description: 'Direct API calls with API key',
-        requiresProxy: false,
-        apiKeyExposed: true,
-        status: !USE_PROXY ? '✓ Configured' : '✗ Proxy detected'
-      },
-      production: {
-        description: 'Proxied calls (API key hidden)',
-        requiresProxy: true,
-        apiKeyExposed: false,
-        status: USE_PROXY ? '✓ Configured' : '⚠ Using direct API (not recommended)'
-      }
-    }
+    mode: 'PROXY_ONLY',
+    proxyUrl: PROXY_URL,
+    usingProxy: true,
+    message: 'Always using proxy - no direct API calls',
+    environment: import.meta.env.DEV ? 'DEVELOPMENT' : 'PRODUCTION'
   }
 }
 
@@ -400,20 +326,11 @@ export function initializeApiService() {
   const config = getApiConfig()
   console.table(config)
   
-  if (isProduction && !USE_PROXY) {
+  if (!PROXY_URL || PROXY_URL === '/api') {
     console.warn(
-      '\n⚠️  SECURITY WARNING:\n' +
-      'Your API key is exposed in production!\n' +
-      'Configure VUE_APP_VERCEL_API_URL in GitHub Secrets to use a proxy.\n'
-    )
-  }
-  
-  if (isDevelopment && !API_KEY) {
-    console.warn(
-      '\n⚠️  SETUP REQUIRED:\n' +
-      '1. Copy .env.local.example to .env.local\n' +
-      '2. Add your NewsAPI key from https://newsapi.org\n' +
-      '3. Restart the development server\n'
+      '\n⚠️  PROXY CONFIGURATION:\n' +
+      'Make sure your proxy is running or deployed.\n' +
+      'VUE_APP_VERCEL_API_URL should point to your proxy server.\n'
     )
   }
 }
