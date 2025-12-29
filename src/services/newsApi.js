@@ -123,7 +123,7 @@ function validateAndSanitizeQuery(query) {
   }
 
   // Relaxed regex to allow more characters including quotes and common punctuation
-  if (!/^[a-zA-Z0-9\s\-.,&()'"\/+:;?!]+$/.test(sanitized)) {
+  if (!/^[a-zA-Z0-9\s\-.,&()'"/+:;?!]+$/.test(sanitized)) {
     throw new Error('Search contains invalid characters')
   }
 
