@@ -1,6 +1,7 @@
 /**
  * NewsAPI Service with Language Support
  * Handles all API calls with language and source filtering
+ * Supports both direct API calls and Vercel proxy
  */
 
 import {
@@ -11,7 +12,9 @@ import {
 } from './languages'
 
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY
-const BASE_URL = 'https://newsapi.org/v2'
+// Use custom API base URL if provided (e.g., Vercel proxy), otherwise use NewsAPI directly
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://newsapi.org/v2'
+const USE_PROXY = Boolean(import.meta.env.VITE_API_BASE_URL)
 
 /**
  * Validate and sanitize search query
@@ -82,11 +85,33 @@ function validateCategory(category) {
 
 /**
  * Get headers for API requests
+ * Only include API key when calling NewsAPI directly (not through proxy)
  */
 function getHeaders() {
-  return {
-    'X-Api-Key': API_KEY,
+  const headers = {
     'Content-Type': 'application/json'
+  }
+  
+  // Only add API key for direct NewsAPI calls (not for proxy)
+  if (!USE_PROXY && API_KEY) {
+    headers['X-Api-Key'] = API_KEY
+  }
+  
+  return headers
+}
+
+/**
+ * Build API URL based on proxy or direct mode
+ * @param {string} endpoint - API endpoint (e.g., 'top-headlines', 'everything')
+ * @param {URLSearchParams} params - Query parameters
+ */
+function buildApiUrl(endpoint, params) {
+  if (USE_PROXY) {
+    // When using proxy, proxy handles the endpoint routing
+    return `${BASE_URL}?${params}`
+  } else {
+    // Direct NewsAPI call
+    return `${BASE_URL}/${endpoint}?${params}`
   }
 }
 
@@ -130,10 +155,8 @@ export async function fetchTopHeadlines(options = {}) {
   }
 
   try {
-    const response = await fetch(
-      `${BASE_URL}/top-headlines?${params}`,
-      { headers: getHeaders() }
-    )
+    const url = buildApiUrl('top-headlines', params)
+    const response = await fetch(url, { headers: getHeaders() })
     
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`)
@@ -195,10 +218,8 @@ export async function searchNews(options = {}) {
   }
 
   try {
-    const response = await fetch(
-      `${BASE_URL}/everything?${params}`,
-      { headers: getHeaders() }
-    )
+    const url = buildApiUrl('everything', params)
+    const response = await fetch(url, { headers: getHeaders() })
     
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`)
@@ -235,4 +256,11 @@ export function getSelectedSources(language = null) {
 export function getCurrentLanguageInfo() {
   const lang = getCurrentLanguage()
   return LANGUAGES[lang]
+}
+
+/**
+ * Check if using proxy mode
+ */
+export function isUsingProxy() {
+  return USE_PROXY
 }
