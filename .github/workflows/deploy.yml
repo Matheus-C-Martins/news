@@ -38,7 +38,8 @@ jobs:
       - name: Build for GitHub Pages
         env:
           # Vite requires VITE_ prefix for environment variables
-          VITE_VERCEL_API_URL: ${{ secrets.VUE_APP_VERCEL_API_URL }}
+          # Testing with hard-coded URL to verify secrets configuration
+          VITE_VERCEL_API_URL: https://news-jzburxf70-matheus-martins-projects-0a83656b.vercel.app/api
           VITE_NEWS_API_KEY: ${{ secrets.VUE_APP_NEWS_API_KEY }}
         run: npm run build
       
