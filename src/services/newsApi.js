@@ -2,12 +2,12 @@
  * NewsAPI Service - Always Using Proxy
  * 
  * Simplified configuration:
- * - LOCAL DEVELOPMENT: Calls proxy at VITE_VERCEL_API_URL
- * - GITHUB PAGES: Calls proxy at VITE_VERCEL_API_URL
+ * - LOCAL DEVELOPMENT: Calls proxy at VUE_APP_VERCEL_API_URL
+ * - GITHUB PAGES: Calls proxy at VUE_APP_VERCEL_API_URL
  * 
  * Proxy URL is set in:
  * - .env.local (locally)
- * - GitHub Secrets VITE_VERCEL_API_URL (production)
+ * - GitHub Secrets VUE_APP_VERCEL_API_URL (production)
  * 
  * Improvements:
  * - Response caching to reduce API calls
@@ -22,8 +22,8 @@ import {
   SOURCE_BY_LANGUAGE
 } from './languages'
 
-// Get proxy URL from environment (VITE_ prefix for Vite build tool)
-const PROXY_URL = import.meta.env.VITE_VERCEL_API_URL || '/api'
+// Get proxy URL from environment (Vue CLI uses VUE_APP_ prefix)
+const PROXY_URL = process.env.VUE_APP_VERCEL_API_URL || '/api'
 const BASE_URL = PROXY_URL
 
 // Cache configuration
@@ -447,7 +447,7 @@ export function getApiConfig() {
     proxyUrl: PROXY_URL,
     usingProxy: true,
     message: 'Always using proxy - no direct API calls',
-    environment: import.meta.env.DEV ? 'DEVELOPMENT' : 'PRODUCTION',
+    environment: process.env.NODE_ENV,
     cacheEnabled: true,
     cacheDuration: CACHE_DURATION / 1000
   }
@@ -468,7 +468,7 @@ export function initializeApiService() {
     console.warn(
       '\n⚠️  PROXY CONFIGURATION:\n' +
       'Make sure your proxy is running or deployed.\n' +
-      'VITE_VERCEL_API_URL should point to your proxy server.\n'
+      'VUE_APP_VERCEL_API_URL should point to your proxy server.\n'
     )
   }
   
