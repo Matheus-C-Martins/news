@@ -1,12 +1,14 @@
 <template>
   <article class="news-card">
     <div class="card-image-wrapper">
-      <img 
-        v-if="article.urlToImage && isHttpsUrl(article.urlToImage)" 
-        :src="article.urlToImage" 
+      <LazyImage
+        v-if="article.urlToImage && isHttpsUrl(article.urlToImage)"
+        :src="article.urlToImage"
         :alt="article.title"
-        class="card-image"
-        @error="handleImageError"
+        aspect-ratio="16/9"
+        object-fit="cover"
+        wrapper-class="card-image-container"
+        image-class="card-image"
       />
       <div v-else class="card-image-placeholder">
         <fa icon="fa-solid fa-image" class="placeholder-icon" />
@@ -45,6 +47,7 @@
 
 <script setup>
 import { defineProps } from 'vue'
+import LazyImage from './LazyImage.vue'
 
 defineProps({
   article: {
@@ -84,11 +87,6 @@ const formatDate = (dateString) => {
   
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
-
-const handleImageError = (event) => {
-  event.target.style.display = 'none'
-  event.target.nextElementSibling?.classList.add('show')
-}
 </script>
 
 <style lang="scss" scoped>
@@ -122,13 +120,15 @@ const handleImageError = (event) => {
     overflow: hidden;
     background: linear-gradient(135deg, var(--primary-light) 0%, rgba(16, 185, 129, 0.1) 100%);
     
-    .card-image {
+    .card-image-container {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       
-      .news-card:hover & {
+      :deep(.card-image) {
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .news-card:hover & :deep(.card-image.loaded) {
         transform: scale(1.08);
       }
     }
@@ -152,6 +152,7 @@ const handleImageError = (event) => {
       position: absolute;
       bottom: 12px;
       left: 12px;
+      z-index: 2;
       
       .badge-small {
         font-size: 0.7rem;
