@@ -5,7 +5,7 @@
  */
 
 import { ref, watch, onMounted } from 'vue'
-import { getCurrentLanguage, setLanguage as setAppLanguage, LANGUAGES } from '@/services/languages'
+import { setLanguage as setAppLanguage, LANGUAGES } from '@/services/languages'
 
 // Reactive settings state (shared across all components)
 const isDarkMode = ref(false)
