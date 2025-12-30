@@ -13,10 +13,38 @@ const currentLanguage = ref('en')
 const isInitialized = ref(false)
 
 /**
+ * Clean up old localStorage keys from previous versions
+ */
+function cleanupOldKeys() {
+  // Remove old dark mode key if it exists
+  if (localStorage.getItem('isDarkMode') !== null) {
+    const oldValue = localStorage.getItem('isDarkMode') === 'true'
+    // Migrate to new key if new key doesn't exist
+    if (localStorage.getItem('darkMode') === null) {
+      localStorage.setItem('darkMode', String(oldValue))
+    }
+    localStorage.removeItem('isDarkMode')
+  }
+
+  // Remove old language key if it exists
+  if (localStorage.getItem('appLanguage') !== null) {
+    const oldValue = localStorage.getItem('appLanguage')
+    // Migrate to new key if new key doesn't exist
+    if (localStorage.getItem('language') === null && LANGUAGES[oldValue]) {
+      localStorage.setItem('language', oldValue)
+    }
+    localStorage.removeItem('appLanguage')
+  }
+}
+
+/**
  * Initialize settings from localStorage
  */
 function initializeSettings() {
   if (isInitialized.value) return
+
+  // Clean up old keys first
+  cleanupOldKeys()
 
   // Load dark mode from localStorage (stored as string 'true' or 'false')
   const savedMode = localStorage.getItem('darkMode')
@@ -28,14 +56,16 @@ function initializeSettings() {
   }
   applyDarkMode(isDarkMode.value)
 
-  // Load language from localStorage
+  // Load language from localStorage with English as default
   const savedLanguage = localStorage.getItem('language')
   if (savedLanguage && LANGUAGES[savedLanguage]) {
     currentLanguage.value = savedLanguage
     setAppLanguage(savedLanguage)
   } else {
-    // Default to system language or English
-    currentLanguage.value = getCurrentLanguage()
+    // Default to English
+    currentLanguage.value = 'en'
+    setAppLanguage('en')
+    localStorage.setItem('language', 'en')
   }
 
   isInitialized.value = true
