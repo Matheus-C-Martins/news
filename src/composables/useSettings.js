@@ -4,10 +4,10 @@
  * Syncs with localStorage and automatically applies changes
  */
 
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { getCurrentLanguage, setLanguage as setAppLanguage, LANGUAGES } from '@/services/languages'
 
-// Reactive settings state
+// Reactive settings state (shared across all components)
 const isDarkMode = ref(false)
 const currentLanguage = ref('en')
 const isInitialized = ref(false)
@@ -98,16 +98,18 @@ function watchStorageChanges() {
   })
 }
 
-// Initialize immediately (not in onMounted) to avoid test warnings
-if (typeof window !== 'undefined' && !isInitialized.value) {
-  initializeSettings()
-  watchStorageChanges()
-}
-
 /**
  * Composable hook for using settings in components
  */
 export function useSettings() {
+  // Initialize on first mount
+  onMounted(() => {
+    if (!isInitialized.value) {
+      initializeSettings()
+      watchStorageChanges()
+    }
+  })
+
   // Watch for changes and sync
   watch(isDarkMode, (newVal) => {
     applyDarkMode(newVal)
