@@ -1,5 +1,5 @@
 <template>
-  <article class="news-card">
+  <article class="news-card card">
     <div class="card-image-wrapper">
       <LazyImage
         v-if="article.urlToImage && isHttpsUrl(article.urlToImage)"
@@ -11,7 +11,7 @@
         image-class="card-image"
       />
       <div v-else class="card-image-placeholder">
-        <fa icon="fa-solid fa-image" class="placeholder-icon" />
+        <fa icon="fa-solid fa-image" class="placeholder-icon" data-testid="fallback-icon" />
       </div>
       <div class="card-source">
         <span class="badge badge-small">{{ article.source.name }}</span>
@@ -80,12 +80,23 @@ const formatDate = (dateString) => {
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
   const diffHours = Math.floor(diffTime / (1000 * 60 * 60))
   const diffMinutes = Math.floor(diffTime / (1000 * 60))
+  const diffSeconds = Math.floor(diffTime / 1000)
   
-  if (diffMinutes < 60) return `${diffMinutes}m ago`
-  if (diffHours < 24) return `${diffHours}h ago`
-  if (diffDays < 7) return `${diffDays}d ago`
+  if (diffSeconds < 60) return `${diffSeconds} seconds ago`
+  if (diffMinutes < 60) return `${diffMinutes} minutes ago`
+  if (diffHours < 24) return `${diffHours} hours ago`
+  if (diffDays < 7) return `${diffDays} days ago`
+  if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7)
+    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`
+  }
+  if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30)
+    return `${months} ${months === 1 ? 'month' : 'months'} ago`
+  }
   
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  const years = Math.floor(diffDays / 365)
+  return `${years} ${years === 1 ? 'year' : 'years'} ago`
 }
 </script>
 
