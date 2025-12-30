@@ -4,8 +4,8 @@
  * Syncs with localStorage and automatically applies changes
  */
 
-import { ref, watch, onMounted } from 'vue'
-import { getCurrentLanguage, setLanguage } from '@/services/languages'
+import { ref, watch } from 'vue'
+import { getCurrentLanguage, setLanguage as setAppLanguage, LANGUAGES } from '@/services/languages'
 
 // Reactive settings state
 const isDarkMode = ref(false)
@@ -18,17 +18,25 @@ const isInitialized = ref(false)
 function initializeSettings() {
   if (isInitialized.value) return
 
-  // Load dark mode
+  // Load dark mode from localStorage (stored as string 'true' or 'false')
   const savedMode = localStorage.getItem('darkMode')
   if (savedMode !== null) {
     isDarkMode.value = savedMode === 'true'
   } else {
+    // Default to system preference
     isDarkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches
   }
   applyDarkMode(isDarkMode.value)
 
-  // Load language
-  currentLanguage.value = getCurrentLanguage()
+  // Load language from localStorage
+  const savedLanguage = localStorage.getItem('language')
+  if (savedLanguage && LANGUAGES[savedLanguage]) {
+    currentLanguage.value = savedLanguage
+    setAppLanguage(savedLanguage)
+  } else {
+    // Default to system language or English
+    currentLanguage.value = getCurrentLanguage()
+  }
 
   isInitialized.value = true
 }
@@ -43,7 +51,8 @@ function applyDarkMode(isDark) {
   } else {
     html.classList.remove('dark-mode')
   }
-  localStorage.setItem('darkMode', isDark)
+  // Store as string for localStorage
+  localStorage.setItem('darkMode', String(isDark))
 }
 
 /**
@@ -58,8 +67,15 @@ function toggleDarkMode() {
  * Change language and save to localStorage
  */
 function changeLanguage(lang) {
+  // Validate language
+  if (!LANGUAGES[lang]) {
+    console.warn(`Invalid language: ${lang}. Keeping current language.`)
+    return
+  }
+  
   currentLanguage.value = lang
-  setLanguage(lang)
+  setAppLanguage(lang)
+  localStorage.setItem('language', lang)
   // Force re-render of views by triggering language change
   window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }))
 }
@@ -72,30 +88,36 @@ function watchStorageChanges() {
     if (event.key === 'darkMode') {
       isDarkMode.value = event.newValue === 'true'
       applyDarkMode(isDarkMode.value)
-    } else if (event.key === 'appLanguage') {
-      currentLanguage.value = event.newValue || 'en'
+    } else if (event.key === 'language') {
+      const newLang = event.newValue || 'en'
+      if (LANGUAGES[newLang]) {
+        currentLanguage.value = newLang
+        setAppLanguage(newLang)
+      }
     }
   })
+}
+
+// Initialize immediately (not in onMounted) to avoid test warnings
+if (typeof window !== 'undefined' && !isInitialized.value) {
+  initializeSettings()
+  watchStorageChanges()
 }
 
 /**
  * Composable hook for using settings in components
  */
 export function useSettings() {
-  onMounted(() => {
-    if (!isInitialized.value) {
-      initializeSettings()
-      watchStorageChanges()
-    }
-  })
-
   // Watch for changes and sync
   watch(isDarkMode, (newVal) => {
     applyDarkMode(newVal)
   })
 
   watch(currentLanguage, (newVal) => {
-    setLanguage(newVal)
+    if (LANGUAGES[newVal]) {
+      setAppLanguage(newVal)
+      localStorage.setItem('language', newVal)
+    }
   })
 
   return {
