@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { useSettings } from '@/composables/useSettings'
 import navbar from './components/navbar.vue'
 import RouteLoader from './components/RouteLoader.vue'
 
@@ -25,6 +26,10 @@ export default {
   components: {
     navbar,
     RouteLoader
+  },
+  setup() {
+    // Initialize settings (dark mode, language) on app mount
+    useSettings()
   }
 }
 </script>
