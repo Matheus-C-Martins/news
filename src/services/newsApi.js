@@ -119,11 +119,11 @@ function validateAndSanitizeQuery(query) {
   }
 
   if (sanitized.length > 500) {
-    throw new Error('Search query cannot exceed 500 characters')
+    throw new Error('Search query is too long')
   }
 
   // Relaxed regex to allow more characters including quotes and common punctuation
-  if (!/^[a-zA-Z0-9\s\-.,&()'"/+:;?!]+$/.test(sanitized)) {
+  if (!/^[a-zA-Z0-9\s\-.,&()'"]+$/.test(sanitized)) {
     throw new Error('Search contains invalid characters')
   }
 
@@ -197,7 +197,7 @@ function handleResponseError(response, context) {
   let errorMessage = `API Error: ${response.status} ${response.statusText}`
   
   if (response.status === 401) {
-    errorMessage = 'Proxy authentication failed. Check backend configuration.'
+    errorMessage = 'Invalid API key'
   } else if (response.status === 403) {
     errorMessage = 'Access denied: Backend may not have API key configured.'
   } else if (response.status === 429) {
