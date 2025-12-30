@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   // Get origin from request
   const origin = req.headers.origin;
   
-  // Allowed origins list
+  // Allowed origins list - includes both root and /news/ path
   const allowedOrigins = [
     'https://matheus-c-martins.github.io',
     'http://localhost:8080',
@@ -21,8 +21,14 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
   } else {
-    // For development/testing, allow all origins
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // For any GitHub Pages subdomain, allow it
+    if (origin && origin.includes('matheus-c-martins.github.io')) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+    } else {
+      // For development/testing, allow all origins
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    }
   }
 
   // Always set these headers for all requests
