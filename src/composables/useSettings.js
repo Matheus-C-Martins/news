@@ -19,7 +19,7 @@ function initializeSettings() {
   if (isInitialized.value) return
 
   // Load dark mode
-  const savedMode = localStorage.getItem('isDarkMode')
+  const savedMode = localStorage.getItem('darkMode')
   if (savedMode !== null) {
     isDarkMode.value = savedMode === 'true'
   } else {
@@ -43,7 +43,15 @@ function applyDarkMode(isDark) {
   } else {
     html.classList.remove('dark-mode')
   }
-  localStorage.setItem('isDarkMode', isDark)
+  localStorage.setItem('darkMode', isDark)
+}
+
+/**
+ * Toggle dark mode on/off
+ */
+function toggleDarkMode() {
+  isDarkMode.value = !isDarkMode.value
+  applyDarkMode(isDarkMode.value)
 }
 
 /**
@@ -61,7 +69,7 @@ function changeLanguage(lang) {
  */
 function watchStorageChanges() {
   window.addEventListener('storage', (event) => {
-    if (event.key === 'isDarkMode') {
+    if (event.key === 'darkMode') {
       isDarkMode.value = event.newValue === 'true'
       applyDarkMode(isDarkMode.value)
     } else if (event.key === 'appLanguage') {
@@ -92,7 +100,10 @@ export function useSettings() {
 
   return {
     isDarkMode,
+    language: currentLanguage,
     currentLanguage,
+    toggleDarkMode,
+    setLanguage: changeLanguage,
     changeLanguage,
     initializeSettings
   }
