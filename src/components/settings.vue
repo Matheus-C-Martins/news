@@ -46,14 +46,14 @@
         <div class="theme-grid">
           <button
             @click="toggleDarkMode"
-            :class="['theme-btn', { active: isDark }]"
+            :class="['theme-btn', { active: isDarkMode }]"
           >
             <fa icon="fa-solid fa-moon" class="theme-icon" />
             <span>Dark Mode</span>
           </button>
           <button
             @click="toggleDarkMode"
-            :class="['theme-btn', { active: !isDark }]"
+            :class="['theme-btn', { active: !isDarkMode }]"
           >
             <fa icon="fa-solid fa-sun" class="theme-icon" />
             <span>Light Mode</span>
@@ -80,41 +80,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import {
-  LANGUAGES,
-  getCurrentLanguage
-  // setLanguage - Currently disabled as language selection feature is coming soon
-} from '../services/languages'
+import { LANGUAGES } from '../services/languages'
+import { useSettings } from '../composables/useSettings'
 
-const isDark = ref(false)
-const currentLanguage = ref('en')
+// Use the centralized settings composable
+const { isDarkMode, currentLanguage, toggleDarkMode } = useSettings()
 
 const languages = Object.values(LANGUAGES)
-
-onMounted(() => {
-  // Load dark mode preference
-  const savedMode = localStorage.getItem('isDarkMode')
-  if (savedMode !== null) {
-    isDark.value = savedMode === 'true'
-  } else {
-    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
-  }
-
-  // Load language preference
-  currentLanguage.value = getCurrentLanguage()
-})
-
-const toggleDarkMode = () => {
-  isDark.value = !isDark.value
-  localStorage.setItem('isDarkMode', isDark.value)
-  const html = document.documentElement
-  if (isDark.value) {
-    html.classList.add('dark-mode')
-  } else {
-    html.classList.remove('dark-mode')
-  }
-}
 </script>
 
 <style lang="scss" scoped>
