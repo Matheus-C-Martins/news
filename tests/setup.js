@@ -28,17 +28,23 @@ global.localStorage = localStorageMock
 // Mock fetch
 global.fetch = vi.fn()
 
-// Configure Vue Test Utils
+// Global test configuration
 config.global.mocks = {
   $route: {
-    path: '/',
     params: {},
-    query: {},
+    query: {}
   },
   $router: {
     push: vi.fn(),
     replace: vi.fn(),
     go: vi.fn(),
-    back: vi.fn(),
-  },
+    back: vi.fn()
+  }
 }
+
+// Reset mocks before each test
+beforeEach(() => {
+  vi.clearAllMocks()
+  localStorage.clear()
+  fetch.mockClear()
+})
