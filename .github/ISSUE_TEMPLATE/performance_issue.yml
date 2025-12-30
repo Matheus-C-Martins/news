@@ -1,0 +1,115 @@
+name: ⚡ Performance Issue
+description: Report slow performance or optimization opportunities
+title: "[Performance]: "
+labels: ["performance", "needs-triage"]
+assignees:
+  - Matheus-C-Martins
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a performance issue! Details help us optimize better.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the performance issue
+      placeholder: The page loads slowly when...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected Area
+      description: Which part of the app is slow?
+      options:
+        - Initial page load
+        - Route navigation
+        - Image loading
+        - API calls
+        - Search functionality
+        - General responsiveness
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Performance Metrics
+      description: If available, provide Lighthouse scores or timing data
+      placeholder: |
+        - Load time: 5.2s
+        - Time to Interactive: 4.8s
+        - Lighthouse Performance: 65
+      render: markdown
+
+  - type: dropdown
+    id: connection
+    attributes:
+      label: Connection Speed
+      description: What type of connection?
+      options:
+        - Fast WiFi
+        - Slow WiFi
+        - 4G/LTE
+        - 3G
+        - 2G
+    validations:
+      required: true
+
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device Performance
+      description: Device type/performance
+      options:
+        - High-end desktop
+        - Low-end desktop
+        - High-end mobile
+        - Low-end mobile
+        - Tablet
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to Reproduce
+      description: How to reproduce the performance issue
+      placeholder: |
+        1. Open DevTools
+        2. Navigate to...
+        3. Observe slow loading
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestions
+    attributes:
+      label: Optimization Suggestions
+      description: Any ideas for improvement?
+      placeholder: Could implement lazy loading for...
+
+  - type: textarea
+    id: profiling
+    attributes:
+      label: Profiling Data
+      description: Chrome DevTools Performance profile or Network waterfall
+      placeholder: Attach screenshots or share DevTools recordings
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Please confirm
+      options:
+        - label: I have tested on multiple devices/connections
+          required: false
+        - label: I have cleared cache and tested again
+          required: true
+        - label: The issue is reproducible
+          required: true
